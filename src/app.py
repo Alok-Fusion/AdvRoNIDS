@@ -691,10 +691,10 @@ async def websocket_investigate(websocket: WebSocket):
                 epsilon=epsilon,
                 num_steps=num_steps,
                 constrained=constrained,
-                mask=feasibility_mask_t,
-                cumulative_mask=cumulative_mask_t,
-                emp_min=emp_min_t,
-                emp_max=emp_max_t,
+                mask=mask_t,
+                cumulative_mask=cum_mask_t,
+                emp_min=min_t,
+                emp_max=max_t,
                 idx_to_class=idx_to_class
             )
             
@@ -705,10 +705,10 @@ async def websocket_investigate(websocket: WebSocket):
                 epsilon=epsilon,
                 num_steps=num_steps,
                 constrained=constrained,
-                mask=feasibility_mask_t,
-                cumulative_mask=cumulative_mask_t,
-                emp_min=emp_min_t,
-                emp_max=emp_max_t,
+                mask=mask_t,
+                cumulative_mask=cum_mask_t,
+                emp_min=min_t,
+                emp_max=max_t,
                 idx_to_class=idx_to_class
             )
             
@@ -746,7 +746,7 @@ async def websocket_investigate(websocket: WebSocket):
                 top_features = []
                 for f_idx in top_indices:
                     f_name = feature_names[f_idx]
-                    is_frz = (feasibility_mask_t[0, f_idx].item() == 0)
+                    is_frz = f_idx in frozen_indices
                     top_features.append({
                         "feature_name": f_name,
                         "feature_index": f_idx,
