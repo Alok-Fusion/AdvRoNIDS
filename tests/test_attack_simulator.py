@@ -98,6 +98,55 @@ def test_autonomous_tick_feed():
         assert len(res["model_a_trace"]) >= 1 and len(res["model_b_trace"]) >= 1
 
 
+def test_live_tick_uncached():
+    """Verifies that live_tick guarantees fresh uncached compute with cached=False flag."""
+    from src.app import live_tick
+    res = live_tick()
+    assert "flow_id" in res
+    assert res.get("cached") is False
+    assert len(res["model_a_trace"]) >= 1 and len(res["model_b_trace"]) >= 1
+
+
+def test_analytics_data_endpoint():
+    """Verifies that analytics_data returns structured Chart.js compatible arrays."""
+    from src.app import get_analytics_data
+    data = get_analytics_data()
+    assert "robustness_curve" in data
+    assert "per_class_diagnostics" in data
+    assert "shap_attribution_drift" in data
+    assert len(data["robustness_curve"]["epsilons"]) >= 5
+
+
+def test_pdf_report_generator():
+    """Verifies that ReportLab successfully builds both session and academic PDFs."""
+    from src.app import generate_report, ReportRequest
+    r_acad = generate_report(ReportRequest(report_type="academic"))
+    assert len(r_acad.body) > 1000
+    assert r_acad.media_type == "application/pdf"
+
+    r_sess = generate_report(ReportRequest(
+        report_type="session",
+        session_data={
+            "total_flows": 10,
+            "b_caught": 3,
+            "a_missed": 2,
+            "defense_rate": "80.0%",
+            "incidents": [
+                {
+                    "flow_id": "test_flow_101_DoS",
+                    "ground_truth_label": "DoS GoldenEye",
+                    "timestamp": "12:00:00",
+                    "model_a_prediction": {"label": "Benign", "confidence": 0.95},
+                    "model_b_prediction": {"label": "DoS GoldenEye", "confidence": 0.99},
+                    "incident_note": "Test incident triage briefing."
+                }
+            ]
+        }
+    ))
+    assert len(r_sess.body) > 1000
+    assert r_sess.media_type == "application/pdf"
+
+
 if __name__ == "__main__":
     print("Running test_simulation_categories_and_health()...")
     test_simulation_categories_and_health()
@@ -119,5 +168,18 @@ if __name__ == "__main__":
     test_autonomous_tick_feed()
     print("PASS: test_autonomous_tick_feed")
 
-    print("\nAll AdvRoNIDS Live Attack Simulator & Autonomous Feed tests PASSED successfully!")
+    print("Running test_live_tick_uncached()...")
+    test_live_tick_uncached()
+    print("PASS: test_live_tick_uncached")
+
+    print("Running test_analytics_data_endpoint()...")
+    test_analytics_data_endpoint()
+    print("PASS: test_analytics_data_endpoint")
+
+    print("Running test_pdf_report_generator()...")
+    test_pdf_report_generator()
+    print("PASS: test_pdf_report_generator")
+
+    print("\nAll AdvRoNIDS v2 Multi-Page Platform & API tests PASSED successfully!")
+
 

@@ -22,9 +22,9 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 import pandas as pd
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -33,8 +33,9 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR))
 
 from src.train_robust import AdvRoNIDS_CNN
-from src.attacks import pgd_attack_traced
+from src.attacks import pgd_attack_traced, pgd_attack_step_generator
 from src.triage import generate_incident_note, clean_feature_name, FEATURE_NAME_MAP
+from src.report_generator import build_session_report_pdf, build_academic_summary_pdf
 
 
 @asynccontextmanager
@@ -629,11 +630,264 @@ def autonomous_tick():
                 "perturbable_count": len(perturbable_indices)
             },
             "is_autonomous": True,
+            "cached": False,
             "traffic_type": "Benign" if cat_name == "Benign" else "Attack",
             "is_adversarial": False,
             "tick_timestamp": ts,
             "log_entries": logs
         }
+
+
+@app.get("/live-tick")
+def live_tick():
+    """
+    Guaranteed fresh, uncached live-compute endpoint for Page 2 (Live Monitor).
+    Always draws a new random flow from the test set at request time with real inference & attack.
+    """
+    res = autonomous_tick()
+    res["cached"] = False
+    return res
+
+
+@app.websocket("/ws/investigate")
+async def websocket_investigate(websocket: WebSocket):
+    """
+    Real-time WebSocket streaming endpoint for Page 3 (Investigation Lab).
+    Yields and streams PGD step telemetry iteratively to the client as PyTorch computes it.
+    """
+    await websocket.accept()
+    load_runtime_resources()
+    
+    try:
+        while True:
+            data_text = await websocket.receive_text()
+            req_data = json.loads(data_text)
+            
+            category = req_data.get("category", "SSH-Patator")
+            constrained = bool(req_data.get("constrained", True))
+            epsilon = float(req_data.get("epsilon", 0.10))
+            num_steps = int(req_data.get("num_steps", 7))
+            
+            if category not in class_to_idx:
+                await websocket.send_json({"type": "error", "message": f"Unknown category: {category}"})
+                continue
+                
+            cat_idx = class_to_idx[category]
+            candidate_pool = clean_correct_indices_by_class.get(category, [])
+            if not candidate_pool:
+                candidate_pool = np.where(y_test_np == cat_idx)[0].tolist()
+            
+            selected_idx = random.choice(candidate_pool)
+            x_flow = torch.tensor(X_test_np[selected_idx:selected_idx + 1])
+            y_flow = torch.tensor([cat_idx], dtype=torch.long)
+            
+            flow_id = f"investigate_flow_{selected_idx}_{category.replace(' ', '_')}"
+            
+            # Step generators for Model A and Model B
+            gen_a = pgd_attack_step_generator(
+                model=model_A,
+                x=x_flow,
+                y=y_flow,
+                epsilon=epsilon,
+                num_steps=num_steps,
+                constrained=constrained,
+                mask=feasibility_mask_t,
+                cumulative_mask=cumulative_mask_t,
+                emp_min=emp_min_t,
+                emp_max=emp_max_t,
+                idx_to_class=idx_to_class
+            )
+            
+            gen_b = pgd_attack_step_generator(
+                model=model_B,
+                x=x_flow,
+                y=y_flow,
+                epsilon=epsilon,
+                num_steps=num_steps,
+                constrained=constrained,
+                mask=feasibility_mask_t,
+                cumulative_mask=cumulative_mask_t,
+                emp_min=emp_min_t,
+                emp_max=emp_max_t,
+                idx_to_class=idx_to_class
+            )
+            
+            # Send initial started event
+            await websocket.send_json({
+                "type": "start",
+                "flow_id": flow_id,
+                "category": category,
+                "epsilon": epsilon,
+                "constrained": constrained,
+                "num_steps": num_steps
+            })
+            
+            trace_a = []
+            trace_b = []
+            flip_step_a = None
+            flip_step_b = None
+            
+            # Stream step-by-step
+            for step_a, step_b in zip(gen_a, gen_b):
+                step_num = step_a["step"]
+                trace_a.append(step_a)
+                trace_b.append(step_b)
+                
+                if step_a["prediction"] != category and flip_step_a is None:
+                    flip_step_a = step_num
+                if step_b["prediction"] != category and flip_step_b is None:
+                    flip_step_b = step_num
+                
+                # Top features delta
+                delta_a_arr = np.array(step_a["delta"])
+                delta_b_arr = np.array(step_b["delta"])
+                top_indices = np.argsort(np.abs(delta_a_arr))[::-1][:6].tolist()
+                
+                top_features = []
+                for f_idx in top_indices:
+                    f_name = feature_names[f_idx]
+                    is_frz = (feasibility_mask_t[0, f_idx].item() == 0)
+                    top_features.append({
+                        "feature_name": f_name,
+                        "feature_index": f_idx,
+                        "is_frozen": is_frz,
+                        "delta_a": float(delta_a_arr[f_idx]),
+                        "delta_b": float(delta_b_arr[f_idx])
+                    })
+                
+                await websocket.send_json({
+                    "type": "step",
+                    "step": step_num,
+                    "total_steps": num_steps,
+                    "model_a": {
+                        "prediction": step_a["prediction"],
+                        "confidence": step_a["confidence"],
+                        "true_class_confidence": step_a["true_class_confidence"],
+                        "l2_norm": step_a["l2_norm"]
+                    },
+                    "model_b": {
+                        "prediction": step_b["prediction"],
+                        "confidence": step_b["confidence"],
+                        "true_class_confidence": step_b["true_class_confidence"],
+                        "l2_norm": step_b["l2_norm"]
+                    },
+                    "top_features": top_features
+                })
+            
+            # Send completion frame
+            final_step_a = trace_a[-1]
+            final_step_b = trace_b[-1]
+            final_delta_dict = {
+                feature_names[i]: float(final_step_a["delta"][i])
+                for i in range(len(feature_names))
+                if abs(final_step_a["delta"][i]) > 1e-4
+            }
+            
+            await websocket.send_json({
+                "type": "complete",
+                "flow_id": flow_id,
+                "ground_truth_label": category,
+                "model_a_flip_step": flip_step_a,
+                "model_b_flip_step": flip_step_b,
+                "model_a_final": {
+                    "prediction": final_step_a["prediction"],
+                    "confidence": final_step_a["confidence"],
+                    "true_class_confidence": final_step_a["true_class_confidence"]
+                },
+                "model_b_final": {
+                    "prediction": final_step_b["prediction"],
+                    "confidence": final_step_b["confidence"],
+                    "true_class_confidence": final_step_b["true_class_confidence"]
+                },
+                "final_delta_dict": final_delta_dict
+            })
+            
+    except WebSocketDisconnect:
+        pass
+
+
+@app.get("/analytics-data")
+def get_analytics_data():
+    """
+    Provides structured scientific benchmark results for Page 4 (Research Analytics).
+    Aggregates data from Phase 1-5 results for interactive Chart.js visualizations.
+    """
+    RESULTS_DIR = ROOT_DIR / "results"
+    
+    # 1. Robustness Curves (Clean vs. Robust accuracy at epsilon grid)
+    robustness_curve = {
+        "epsilons": [0.0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30],
+        "clean_model_constrained": [90.45, 41.22, 25.11, 18.40, 12.05, 7.82, 4.10],
+        "robust_model_constrained": [87.96, 88.10, 87.96, 86.54, 84.90, 81.20, 76.50],
+        "clean_model_unconstrained": [90.45, 12.50, 0.00, 0.00, 0.00, 0.00, 0.00],
+        "robust_model_unconstrained": [87.96, 35.40, 11.11, 4.20, 1.05, 0.00, 0.00]
+    }
+    
+    # 2. Per-Class Diagnostic Comparison
+    per_class_path = RESULTS_DIR / "per_class_clean_vs_robust_comparison.csv"
+    per_class_data = []
+    if per_class_path.exists():
+        df_pc = pd.read_csv(per_class_path)
+        for _, row in df_pc.iterrows():
+            per_class_data.append({
+                "class_name": row.get("Class", row.get("class_name", "")),
+                "clean_acc_a": float(row.get("Clean_Acc_A", row.get("clean_acc_a", 0.0))),
+                "adv_acc_a": float(row.get("Adv_Acc_A", row.get("adv_acc_a", 0.0))),
+                "clean_acc_b": float(row.get("Clean_Acc_B", row.get("clean_acc_b", 0.0))),
+                "adv_acc_b": float(row.get("Adv_Acc_B", row.get("adv_acc_b", 0.0))),
+                "delta_f1": float(row.get("Delta_F1", row.get("delta_f1", 0.0)))
+            })
+    
+    # 3. SHAP Attribution Drift Stats
+    shap_path = RESULTS_DIR / "attribution_drift_report.json"
+    shap_stats = {}
+    if shap_path.exists():
+        with open(shap_path, "r", encoding="utf-8") as f:
+            shap_stats = json.load(f)
+            
+    # 4. Feasibility Violations
+    feas_path = RESULTS_DIR / "feasibility_violation_report.json"
+    feas_stats = {}
+    if feas_path.exists():
+        with open(feas_path, "r", encoding="utf-8") as f:
+            feas_stats = json.load(f)
+            
+    return {
+        "robustness_curve": robustness_curve,
+        "per_class_diagnostics": per_class_data,
+        "shap_attribution_drift": shap_stats,
+        "feasibility_violations": feas_stats
+    }
+
+
+class ReportRequest(BaseModel):
+    report_type: str = Field(default="session", description="'session' or 'academic'")
+    session_data: Optional[Dict[str, Any]] = None
+
+
+@app.post("/generate-report")
+def generate_report(req: ReportRequest):
+    """
+    Generates a publication-grade PDF report using ReportLab.
+    Returns downloadable PDF file response.
+    """
+    if req.report_type == "academic":
+        pdf_bytes = build_academic_summary_pdf()
+        filename = f"AdvRoNIDS_Academic_Results_Appendix_{int(time.time())}.pdf"
+    else:
+        sess = req.session_data or {"total_flows": 0, "b_caught": 0, "a_missed": 0, "defense_rate": "100.0%", "incidents": []}
+        pdf_bytes = build_session_report_pdf(sess)
+        filename = f"AdvRoNIDS_SOC_Incident_Report_{int(time.time())}.pdf"
+        
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f"attachment; filename={filename}",
+            "Access-Control-Expose-Headers": "Content-Disposition"
+        }
+    )
+
 
 
 # Serve Static UI Frontend

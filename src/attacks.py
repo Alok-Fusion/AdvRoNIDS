@@ -290,6 +290,98 @@ def pgd_attack_traced(model, x, y, epsilon, alpha=None, num_steps=7, criterion=N
     return x_adv.detach(), trace
 
 
+def pgd_attack_step_generator(model, x, y, epsilon, alpha=None, num_steps=7, criterion=None,
+                              constrained=True, mask=None, cumulative_mask=None,
+                              emp_min=None, emp_max=None, random_start=False, idx_to_class=None):
+    """
+    Generator variant of PGD attack that yields telemetry data after each individual step.
+    Designed for real-time WebSocket streaming in the Investigation Lab.
+    
+    Yields:
+        dict: Telemetry for step 0, 1, ..., num_steps
+    """
+    if criterion is None:
+        criterion = nn.CrossEntropyLoss()
+
+    if alpha is None:
+        alpha = epsilon / 4.0
+
+    y_idx = y.item() if isinstance(y, torch.Tensor) and y.numel() == 1 else int(y[0])
+
+    x_orig = x.clone().detach()
+    x_adv = x.clone().detach()
+
+    if random_start and epsilon > 0:
+        noise = torch.empty_like(x_adv).uniform_(-epsilon, epsilon)
+        x_adv = x_adv + noise
+        if constrained:
+            if mask is not None and cumulative_mask is not None and emp_min is not None and emp_max is not None:
+                x_adv = torch.clamp(x_adv, x_orig - epsilon, x_orig + epsilon)
+                x_adv = project_feasible(x_adv, x_orig, mask, cumulative_mask, emp_min, emp_max)
+        else:
+            x_adv = torch.clamp(x_adv, x_orig - epsilon, x_orig + epsilon)
+
+    # Step 0: Clean / Initial
+    with torch.no_grad():
+        logits_0 = model(x_adv)
+        probs_0 = F.softmax(logits_0, dim=-1)[0]
+        pred_0 = torch.argmax(probs_0).item()
+        conf_0 = float(probs_0[pred_0].item())
+        true_conf_0 = float(probs_0[y_idx].item()) if y_idx < len(probs_0) else 0.0
+
+    delta_0 = (x_adv - x_orig).view(-1).cpu().tolist()
+    yield {
+        "step": 0,
+        "x": x_adv.view(-1).cpu().tolist(),
+        "delta": delta_0,
+        "prediction": idx_to_class[pred_0] if idx_to_class and pred_0 in idx_to_class else str(pred_0),
+        "prediction_index": pred_0,
+        "confidence": conf_0,
+        "true_class_confidence": true_conf_0,
+        "l2_norm": float(torch.norm(x_adv - x_orig, p=2).item())
+    }
+
+    # Step 1 to num_steps
+    for step in range(1, num_steps + 1):
+        x_adv.requires_grad_(True)
+        logits = model(x_adv)
+        loss = criterion(logits, y)
+
+        grad = torch.autograd.grad(loss, x_adv, retain_graph=False, create_graph=False)[0]
+
+        # Signed step
+        x_adv = x_adv.detach() + alpha * torch.sign(grad)
+
+        if constrained:
+            if mask is not None and cumulative_mask is not None and emp_min is not None and emp_max is not None:
+                x_adv = torch.clamp(x_adv, x_orig - epsilon, x_orig + epsilon)
+                x_adv = project_feasible(x_adv, x_orig, mask, cumulative_mask, emp_min, emp_max)
+            else:
+                x_adv = torch.clamp(x_adv, x_orig - epsilon, x_orig + epsilon)
+        else:
+            x_adv = torch.clamp(x_adv, x_orig - epsilon, x_orig + epsilon)
+
+        with torch.no_grad():
+            logits_step = model(x_adv)
+            probs_step = F.softmax(logits_step, dim=-1)[0]
+            pred_step = torch.argmax(probs_step).item()
+            conf_step = float(probs_step[pred_step].item())
+            true_conf_step = float(probs_step[y_idx].item()) if y_idx < len(probs_step) else 0.0
+
+        delta_step = (x_adv - x_orig).view(-1).cpu().tolist()
+        yield {
+            "step": step,
+            "x": x_adv.view(-1).cpu().tolist(),
+            "delta": delta_step,
+            "prediction": idx_to_class[pred_step] if idx_to_class and pred_step in idx_to_class else str(pred_step),
+            "prediction_index": pred_step,
+            "confidence": conf_step,
+            "true_class_confidence": true_conf_step,
+            "l2_norm": float(torch.norm(x_adv - x_orig, p=2).item())
+        }
+
+
+
 def compute_detailed_feasibility_metrics(x_adv_unconstrained, x_original, mask,
                                          cumulative_mask, protocol_indices, emp_min, emp_max, tol=1e-5):
     """
