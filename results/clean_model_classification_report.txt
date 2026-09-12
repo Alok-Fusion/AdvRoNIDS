@@ -1,0 +1,29 @@
+================================================================================
+AdvRoNIDS Model A (Clean 1D-CNN) - Test Set Classification Report
+================================================================================
+
+                          precision    recall  f1-score   support
+
+                  Benign     0.9919    0.8974    0.9423    284297
+                     Bot     0.0203    0.9583    0.0398       216
+                    DDoS     0.7239    0.9996    0.8397     19202
+           DoS GoldenEye     0.6079    0.9929    0.7541      1543
+                DoS Hulk     0.9318    0.9197    0.9257     25927
+        DoS Slowhttptest     0.5490    0.9796    0.7036       784
+           DoS slowloris     0.8439    0.9703    0.9027       808
+             FTP-Patator     0.4424    0.9933    0.6121       889
+              Heartbleed     0.4000    1.0000    0.5714         2
+            Infiltration     0.0077    0.8000    0.0152         5
+                PortScan     0.1770    0.9422    0.2980       294
+             SSH-Patator     0.7530    0.9151    0.8262       483
+  Web Attack-Brute Force     0.0365    0.9318    0.0703       220
+Web Attack-Sql Injection     0.0000    0.0000    0.0000         3
+          Web Attack-XSS     0.0000    0.0000    0.0000        98
+
+                accuracy                         0.9059    334771
+               macro avg     0.4324    0.8200    0.5001    334771
+            weighted avg     0.9647    0.9059    0.9305    334771
+
+Test Accuracy:    90.588%
+Test Macro-F1:    0.5001
+Test Weighted-F1: 0.9305

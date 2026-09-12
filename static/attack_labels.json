@@ -1,0 +1,92 @@
+{
+  "Benign": {
+    "display_name": "Normal Traffic",
+    "description": "Ordinary, non-malicious network activity (web browsing, streaming, standard business protocols).",
+    "category": "Legitimate Traffic",
+    "severity": "None"
+  },
+  "SSH-Patator": {
+    "display_name": "SSH Password Guessing",
+    "description": "Automated repeated login attempts against remote SSH administrative access.",
+    "category": "Brute Force Attack",
+    "severity": "High"
+  },
+  "FTP-Patator": {
+    "display_name": "FTP Password Guessing",
+    "description": "Automated repeated credential guessing against FTP file transfer services.",
+    "category": "Brute Force Attack",
+    "severity": "High"
+  },
+  "DoS GoldenEye": {
+    "display_name": "DoS Attack (GoldenEye)",
+    "description": "A denial-of-service attack designed to exhaust web server connection pools and memory.",
+    "category": "Denial of Service",
+    "severity": "High"
+  },
+  "DoS Hulk": {
+    "display_name": "DoS Attack (HULK)",
+    "description": "A high-volume HTTP flood attack designed to bypass web caching layers and crash servers.",
+    "category": "Denial of Service",
+    "severity": "High"
+  },
+  "DoS Slowhttptest": {
+    "display_name": "DoS Attack (SlowHTTPTest)",
+    "description": "A slow-rate HTTP attack that holds server connections open until connection tables fill up.",
+    "category": "Denial of Service",
+    "severity": "Medium"
+  },
+  "DoS slowloris": {
+    "display_name": "DoS Attack (Slowloris)",
+    "description": "A low-bandwidth attack sending incomplete HTTP headers to tie up server worker threads.",
+    "category": "Denial of Service",
+    "severity": "Medium"
+  },
+  "DDoS": {
+    "display_name": "DDoS Flood (Distributed)",
+    "description": "A distributed high-rate traffic flood originating from multiple sources to overwhelm target infrastructure.",
+    "category": "Distributed Denial of Service",
+    "severity": "Critical"
+  },
+  "PortScan": {
+    "display_name": "Port Scanning Probes",
+    "description": "Reconnaissance probing to discover which ports, services, and system versions are accessible.",
+    "category": "Reconnaissance",
+    "severity": "Medium"
+  },
+  "Bot": {
+    "display_name": "Botnet Activity (C2)",
+    "description": "Traffic between a compromised internal device and an external botnet Command-and-Control controller.",
+    "category": "Malware & Botnet",
+    "severity": "High"
+  },
+  "Web Attack-Brute Force": {
+    "display_name": "Web Login Brute-Forcing",
+    "description": "Repeated automated password guessing to unlawfully gain access to a web application account.",
+    "category": "Web Application Attack",
+    "severity": "High"
+  },
+  "Web Attack-XSS": {
+    "display_name": "Cross-Site Scripting (XSS)",
+    "description": "Injecting malicious browser scripts into web parameters to target application visitors.",
+    "category": "Web Application Attack",
+    "severity": "Medium"
+  },
+  "Web Attack-Sql Injection": {
+    "display_name": "SQL Injection Attack",
+    "description": "Injecting database commands to illicitly extract sensitive records or bypass authentication.",
+    "category": "Web Application Attack",
+    "severity": "Critical"
+  },
+  "Infiltration": {
+    "display_name": "Internal Network Infiltration",
+    "description": "Post-exploitation lateral movement and internal discovery following an initial breach.",
+    "category": "Lateral Movement",
+    "severity": "Critical"
+  },
+  "Heartbleed": {
+    "display_name": "Heartbleed Exploit (CVE-2014-0160)",
+    "description": "Exploiting OpenSSL memory disclosure flaw to illicitly read server memory and private keys.",
+    "category": "Vulnerability Exploit",
+    "severity": "Critical"
+  }
+}

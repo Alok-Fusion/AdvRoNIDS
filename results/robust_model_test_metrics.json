@@ -1,0 +1,199 @@
+{
+  "model_name": "AdvRoNIDS_ModelB_Robust_1D_CNN",
+  "checkpoint_epoch": 13,
+  "timestamp": "2026-09-10 23:28:37",
+  "evaluation_samples": 50000,
+  "clean_baseline": {
+    "accuracy": 0.90858,
+    "macro_f1": 0.5204172013671238,
+    "weighted_f1": 0.926809793317922,
+    "classification_report": {
+      "Benign": {
+        "precision": 0.9994231928895414,
+        "recall": 0.8979317817770659,
+        "f1-score": 0.9459630489000286,
+        "support": 42452.0
+      },
+      "Bot": {
+        "precision": 0.03904282115869018,
+        "recall": 0.9393939393939394,
+        "f1-score": 0.07496977025392987,
+        "support": 33.0
+      },
+      "DDoS": {
+        "precision": 0.5746388443017657,
+        "recall": 0.99860529986053,
+        "f1-score": 0.7294956698930208,
+        "support": 2868.0
+      },
+      "DoS GoldenEye": {
+        "precision": 0.44639376218323584,
+        "recall": 0.9913419913419913,
+        "f1-score": 0.6155913978494624,
+        "support": 231.0
+      },
+      "DoS Hulk": {
+        "precision": 0.9322205361659079,
+        "recall": 0.9519628099173554,
+        "f1-score": 0.9419882443138257,
+        "support": 3872.0
+      },
+      "DoS Slowhttptest": {
+        "precision": 0.6404494382022472,
+        "recall": 0.9661016949152542,
+        "f1-score": 0.7702702702702703,
+        "support": 118.0
+      },
+      "DoS slowloris": {
+        "precision": 0.7048192771084337,
+        "recall": 0.9669421487603306,
+        "f1-score": 0.8153310104529616,
+        "support": 121.0
+      },
+      "FTP-Patator": {
+        "precision": 0.20826446280991737,
+        "recall": 0.9402985074626866,
+        "f1-score": 0.34100135317997293,
+        "support": 134.0
+      },
+      "Heartbleed": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 1.0
+      },
+      "Infiltration": {
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1-score": 0.5,
+        "support": 2.0
+      },
+      "PortScan": {
+        "precision": 0.16475095785440613,
+        "recall": 0.9555555555555556,
+        "f1-score": 0.28104575163398693,
+        "support": 45.0
+      },
+      "SSH-Patator": {
+        "precision": 0.39520958083832336,
+        "recall": 0.9041095890410958,
+        "f1-score": 0.55,
+        "support": 73.0
+      },
+      "Web Attack-Brute Force": {
+        "precision": 0.13793103448275862,
+        "recall": 0.9411764705882353,
+        "f1-score": 0.24060150375939848,
+        "support": 34.0
+      },
+      "Web Attack-Sql Injection": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 1.0
+      },
+      "Web Attack-XSS": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 15.0
+      },
+      "accuracy": 0.90858,
+      "macro avg": {
+        "precision": 0.44954292719968186,
+        "recall": 0.7968946525742694,
+        "f1-score": 0.5204172013671238,
+        "support": 50000.0
+      },
+      "weighted avg": {
+        "precision": 0.960425164602656,
+        "recall": 0.90858,
+        "f1-score": 0.926809793317922,
+        "support": 50000.0
+      }
+    }
+  },
+  "fgsm_epsilon_0_1": {
+    "unconstrained": {
+      "accuracy": 0.84818,
+      "macro_f1": 0.3597337094614402,
+      "weighted_f1": 0.8853708606114017,
+      "time_seconds": 9.401195764541626
+    },
+    "constrained": {
+      "accuracy": 0.89202,
+      "macro_f1": 0.4373895103042789,
+      "weighted_f1": 0.915254576985649,
+      "time_seconds": 10.718238353729248
+    }
+  },
+  "pgd_sweep": {
+    "epsilons": [
+      0.01,
+      0.05,
+      0.1,
+      0.2
+    ],
+    "num_steps": 7,
+    "constrained": [
+      {
+        "epsilon": 0.01,
+        "accuracy": 0.90668,
+        "macro_f1": 0.5155269551834927,
+        "weighted_f1": 0.9254463114544061,
+        "time_seconds": 46.14558959007263
+      },
+      {
+        "epsilon": 0.05,
+        "accuracy": 0.89544,
+        "macro_f1": 0.47854998631419526,
+        "weighted_f1": 0.9177832196209211,
+        "time_seconds": 41.90416717529297
+      },
+      {
+        "epsilon": 0.1,
+        "accuracy": 0.8796,
+        "macro_f1": 0.4118117188525696,
+        "weighted_f1": 0.9071556881477838,
+        "time_seconds": 39.973421573638916
+      },
+      {
+        "epsilon": 0.2,
+        "accuracy": 0.78192,
+        "macro_f1": 0.20122184424020942,
+        "weighted_f1": 0.8312586029642314,
+        "time_seconds": 40.08590626716614
+      }
+    ],
+    "unconstrained": [
+      {
+        "epsilon": 0.01,
+        "accuracy": 0.90428,
+        "macro_f1": 0.5101028365636944,
+        "weighted_f1": 0.9237406200095215,
+        "time_seconds": 46.41345000267029
+      },
+      {
+        "epsilon": 0.05,
+        "accuracy": 0.8771,
+        "macro_f1": 0.4267672802594777,
+        "weighted_f1": 0.9054480879803881,
+        "time_seconds": 42.0178120136261
+      },
+      {
+        "epsilon": 0.1,
+        "accuracy": 0.7993,
+        "macro_f1": 0.3093278617915843,
+        "weighted_f1": 0.8495380232811495,
+        "time_seconds": 40.977946758270264
+      },
+      {
+        "epsilon": 0.2,
+        "accuracy": 0.34236,
+        "macro_f1": 0.07655581205824728,
+        "weighted_f1": 0.46379586088089886,
+        "time_seconds": 40.77489256858826
+      }
+    ]
+  }
+}

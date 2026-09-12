@@ -1,0 +1,397 @@
+================================================================================
+AdvRoNIDS - CICIDS2017 Preprocessing Pipeline Detailed Documentation
+Generated at: 2026-09-09 14:50:52
+================================================================================
+
+
+================================================================================
+[2026-09-09 14:50:52] [RAM: 130.1 MB] Starting AdvRoNIDS Preprocessing Pipeline...
+================================================================================
+[2026-09-09 14:50:52] [RAM: 130.1 MB] Resolved raw data directory: C:\Users\ak500\OneDrive\Desktop\IT\AdvRoNIDS\data
+
+[2026-09-09 14:50:52] [RAM: 130.2 MB] --- Exporting raw parquet files to CSV in 'data\raw_csv'... ---
+[2026-09-09 14:50:52] [RAM: 130.2 MB]   Raw CSV already exists: Benign-Monday-no-metadata.csv (skipping redundant rewrite).
+[2026-09-09 14:50:52] [RAM: 130.2 MB]   Raw CSV already exists: Bruteforce-Tuesday-no-metadata.csv (skipping redundant rewrite).
+[2026-09-09 14:50:52] [RAM: 130.2 MB]   Raw CSV already exists: DoS-Wednesday-no-metadata.csv (skipping redundant rewrite).
+[2026-09-09 14:50:52] [RAM: 130.2 MB]   Raw CSV already exists: Infiltration-Thursday-no-metadata.csv (skipping redundant rewrite).
+[2026-09-09 14:50:52] [RAM: 130.2 MB]   Raw CSV already exists: WebAttacks-Thursday-no-metadata.csv (skipping redundant rewrite).
+[2026-09-09 14:50:52] [RAM: 130.2 MB]   Raw CSV already exists: Portscan-Friday-no-metadata.csv (skipping redundant rewrite).
+[2026-09-09 14:50:52] [RAM: 130.2 MB]   Raw CSV already exists: DDoS-Friday-no-metadata.csv (skipping redundant rewrite).
+[2026-09-09 14:50:52] [RAM: 130.2 MB]   Raw CSV already exists: Botnet-Friday-no-metadata.csv (skipping redundant rewrite).
+[2026-09-09 14:50:52] [RAM: 130.2 MB] Raw files CSV export complete.
+
+
+================================================================================
+[2026-09-09 14:50:52] [RAM: 130.2 MB] Step 1: Ingestion & Schema Alignment
+================================================================================
+[2026-09-09 14:50:52] [RAM: 130.2 MB] Loading 'Benign-Monday-no-metadata.parquet'...
+[2026-09-09 14:50:52] [RAM: 410.1 MB]   Loaded 458,831 rows, 79 columns.
+[2026-09-09 14:50:52] [RAM: 410.1 MB] Loading 'Bruteforce-Tuesday-no-metadata.parquet'...
+[2026-09-09 14:50:52] [RAM: 546.1 MB]   Loaded 389,714 rows, 79 columns.
+[2026-09-09 14:50:52] [RAM: 546.1 MB] Loading 'DoS-Wednesday-no-metadata.parquet'...
+[2026-09-09 14:50:52] [RAM: 777.2 MB]   Loaded 584,991 rows, 79 columns.
+[2026-09-09 14:50:52] [RAM: 777.2 MB] Loading 'Infiltration-Thursday-no-metadata.parquet'...
+[2026-09-09 14:50:52] [RAM: 819.1 MB]   Loaded 207,630 rows, 79 columns.
+[2026-09-09 14:50:52] [RAM: 819.1 MB] Loading 'WebAttacks-Thursday-no-metadata.parquet'...
+[2026-09-09 14:50:52] [RAM: 848.1 MB]   Loaded 155,820 rows, 79 columns.
+[2026-09-09 14:50:52] [RAM: 848.1 MB] Loading 'Portscan-Friday-no-metadata.parquet'...
+[2026-09-09 14:50:52] [RAM: 861.3 MB]   Loaded 119,522 rows, 79 columns.
+[2026-09-09 14:50:52] [RAM: 861.3 MB] Loading 'DDoS-Friday-no-metadata.parquet'...
+[2026-09-09 14:50:53] [RAM: 896.3 MB]   Loaded 221,264 rows, 79 columns.
+[2026-09-09 14:50:53] [RAM: 896.3 MB] Loading 'Botnet-Friday-no-metadata.parquet'...
+[2026-09-09 14:50:53] [RAM: 941.3 MB]   Loaded 176,038 rows, 79 columns.
+[2026-09-09 14:50:53] [RAM: 941.3 MB] Concatenating 8 dataframes (total raw rows: 2,313,810)...
+[2026-09-09 14:50:53] [RAM: 1509.7 MB] Initial merged dataset shape: 2,313,810 rows x 79 columns
+
+================================================================================
+[2026-09-09 14:50:53] [RAM: 1509.7 MB] Step 2: Label Encoding Correction
+================================================================================
+[2026-09-09 14:50:53] [RAM: 1509.9 MB] Raw label distribution before cleaning:
+[2026-09-09 14:50:53] [RAM: 1509.9 MB]   - Benign: 1,977,318 samples
+[2026-09-09 14:50:53] [RAM: 1509.9 MB]   - DoS Hulk: 172,846 samples
+[2026-09-09 14:50:53] [RAM: 1509.9 MB]   - DDoS: 128,014 samples
+[2026-09-09 14:50:53] [RAM: 1509.9 MB]   - DoS GoldenEye: 10,286 samples
+[2026-09-09 14:50:53] [RAM: 1509.9 MB]   - FTP-Patator: 5,931 samples
+[2026-09-09 14:50:53] [RAM: 1509.9 MB]   - DoS slowloris: 5,385 samples
+[2026-09-09 14:50:53] [RAM: 1509.9 MB]   - DoS Slowhttptest: 5,228 samples
+[2026-09-09 14:50:53] [RAM: 1509.9 MB]   - SSH-Patator: 3,219 samples
+[2026-09-09 14:50:53] [RAM: 1509.9 MB]   - PortScan: 1,956 samples
+[2026-09-09 14:50:53] [RAM: 1509.9 MB]   - Web Attack \ufffd Brute Force: 1,470 samples
+[2026-09-09 14:50:53] [RAM: 1509.9 MB]   - Bot: 1,437 samples
+[2026-09-09 14:50:53] [RAM: 1509.9 MB]   - Web Attack \ufffd XSS: 652 samples
+[2026-09-09 14:50:53] [RAM: 1509.9 MB]   - Infiltration: 36 samples
+[2026-09-09 14:50:53] [RAM: 1509.9 MB]   - Web Attack \ufffd Sql Injection: 21 samples
+[2026-09-09 14:50:53] [RAM: 1509.9 MB]   - Heartbleed: 11 samples
+[2026-09-09 14:50:55] [RAM: 1545.3 MB] Cleaned label distribution:
+[2026-09-09 14:50:55] [RAM: 1545.3 MB]   - Benign: 1,977,318 samples
+[2026-09-09 14:50:55] [RAM: 1545.3 MB]   - DoS Hulk: 172,846 samples
+[2026-09-09 14:50:55] [RAM: 1545.3 MB]   - DDoS: 128,014 samples
+[2026-09-09 14:50:55] [RAM: 1545.3 MB]   - DoS GoldenEye: 10,286 samples
+[2026-09-09 14:50:55] [RAM: 1545.3 MB]   - FTP-Patator: 5,931 samples
+[2026-09-09 14:50:55] [RAM: 1545.3 MB]   - DoS slowloris: 5,385 samples
+[2026-09-09 14:50:55] [RAM: 1545.3 MB]   - DoS Slowhttptest: 5,228 samples
+[2026-09-09 14:50:55] [RAM: 1545.3 MB]   - SSH-Patator: 3,219 samples
+[2026-09-09 14:50:55] [RAM: 1545.3 MB]   - PortScan: 1,956 samples
+[2026-09-09 14:50:55] [RAM: 1545.3 MB]   - Web Attack-Brute Force: 1,470 samples
+[2026-09-09 14:50:55] [RAM: 1545.3 MB]   - Bot: 1,437 samples
+[2026-09-09 14:50:55] [RAM: 1545.3 MB]   - Web Attack-XSS: 652 samples
+[2026-09-09 14:50:55] [RAM: 1545.3 MB]   - Infiltration: 36 samples
+[2026-09-09 14:50:55] [RAM: 1545.3 MB]   - Web Attack-Sql Injection: 21 samples
+[2026-09-09 14:50:55] [RAM: 1545.3 MB]   - Heartbleed: 11 samples
+
+================================================================================
+[2026-09-09 14:50:55] [RAM: 1545.3 MB] Step 3: Defensive Inf and NaN Handling
+================================================================================
+[2026-09-09 14:50:55] [RAM: 1545.4 MB] Scanning 77 numeric columns for infinite values...
+[2026-09-09 14:50:57] [RAM: 1510.4 MB] Found 0 NaN values across 0 rows.
+[2026-09-09 14:50:57] [RAM: 1510.4 MB] Dataset is free of NaN/Inf values. No rows dropped in this step.
+[2026-09-09 14:50:57] [RAM: 1510.4 MB] Shape after NaN/Inf handling: 2,313,810 rows x 79 columns
+
+================================================================================
+[2026-09-09 14:50:57] [RAM: 1510.4 MB] Step 4: Dataset Deduplication
+================================================================================
+[2026-09-09 14:51:10] [RAM: 1490.0 MB] Exact duplicates removed: 82,004 rows.
+[2026-09-09 14:51:10] [RAM: 1490.0 MB] Dataset shape after deduplication: 2,231,806 rows x 79 columns (Expected ~2,231,806 rows).
+
+================================================================================
+[2026-09-09 14:51:10] [RAM: 1490.0 MB] Step 5: Zero-Variance Feature Pruning
+================================================================================
+[2026-09-09 14:51:12] [RAM: 1490.1 MB] Identified 8 zero-variance columns:
+[2026-09-09 14:51:12] [RAM: 1490.1 MB]   - Bwd PSH Flags (variance = 0.0)
+[2026-09-09 14:51:12] [RAM: 1490.1 MB]   - Bwd URG Flags (variance = 0.0)
+[2026-09-09 14:51:12] [RAM: 1490.1 MB]   - Fwd Avg Bytes/Bulk (variance = 0.0)
+[2026-09-09 14:51:12] [RAM: 1490.1 MB]   - Fwd Avg Packets/Bulk (variance = 0.0)
+[2026-09-09 14:51:12] [RAM: 1490.1 MB]   - Fwd Avg Bulk Rate (variance = 0.0)
+[2026-09-09 14:51:12] [RAM: 1490.1 MB]   - Bwd Avg Bytes/Bulk (variance = 0.0)
+[2026-09-09 14:51:12] [RAM: 1490.1 MB]   - Bwd Avg Packets/Bulk (variance = 0.0)
+[2026-09-09 14:51:12] [RAM: 1490.1 MB]   - Bwd Avg Bulk Rate (variance = 0.0)
+[2026-09-09 14:51:13] [RAM: 1473.0 MB] Shape after dropping zero-variance features: 2,231,806 rows x 71 columns (Expected: 71 cols before OHE/split).
+
+================================================================================
+[2026-09-09 14:51:13] [RAM: 1473.0 MB] Step 5b: Memory Optimization (Float64 -> Float32 Downcasting)
+================================================================================
+[2026-09-09 14:51:13] [RAM: 1473.0 MB] Downcasting 2 float64 columns to float32: ['Flow Bytes/s', 'Flow Packets/s']
+
+================================================================================
+[2026-09-09 14:51:13] [RAM: 1456.0 MB] Step 6: Feature Categorization & One-Hot Encoding
+================================================================================
+[2026-09-09 14:51:13] [RAM: 1439.0 MB] One-hot encoding multi-category feature 'Protocol' (unique values: [0, 6, 17])...
+[2026-09-09 14:51:14] [RAM: 1444.9 MB] Generated Protocol dummy columns: ['Protocol_0', 'Protocol_6', 'Protocol_17']
+[2026-09-09 14:51:14] [RAM: 1954.1 MB] Identified 10 binary flag columns (kept as raw 0/1 numeric):
+[2026-09-09 14:51:14] [RAM: 1954.1 MB]   - Fwd PSH Flags
+[2026-09-09 14:51:14] [RAM: 1954.1 MB]   - Fwd URG Flags
+[2026-09-09 14:51:14] [RAM: 1954.1 MB]   - FIN Flag Count
+[2026-09-09 14:51:14] [RAM: 1954.1 MB]   - SYN Flag Count
+[2026-09-09 14:51:14] [RAM: 1954.1 MB]   - RST Flag Count
+[2026-09-09 14:51:14] [RAM: 1954.1 MB]   - PSH Flag Count
+[2026-09-09 14:51:14] [RAM: 1954.1 MB]   - ACK Flag Count
+[2026-09-09 14:51:14] [RAM: 1954.1 MB]   - URG Flag Count
+[2026-09-09 14:51:14] [RAM: 1954.1 MB]   - CWE Flag Count
+[2026-09-09 14:51:14] [RAM: 1954.1 MB]   - ECE Flag Count
+[2026-09-09 14:51:14] [RAM: 1954.1 MB] Feature summary: 71 total features (58 continuous, 13 discrete/flags/OHE).
+
+================================================================================
+[2026-09-09 14:51:14] [RAM: 1443.1 MB] Step 7: Stratified 70/15/15 Train/Val/Test Split
+================================================================================
+[2026-09-09 14:51:15] [RAM: 1943.3 MB] Total class counts before splitting:
+[2026-09-09 14:51:15] [RAM: 1943.3 MB]   - Benign: 1,895,314 samples
+[2026-09-09 14:51:15] [RAM: 1943.3 MB]   - DoS Hulk: 172,846 samples
+[2026-09-09 14:51:15] [RAM: 1943.3 MB]   - DDoS: 128,014 samples
+[2026-09-09 14:51:15] [RAM: 1943.3 MB]   - DoS GoldenEye: 10,286 samples
+[2026-09-09 14:51:15] [RAM: 1943.3 MB]   - FTP-Patator: 5,931 samples
+[2026-09-09 14:51:15] [RAM: 1943.3 MB]   - DoS slowloris: 5,385 samples
+[2026-09-09 14:51:15] [RAM: 1943.3 MB]   - DoS Slowhttptest: 5,228 samples
+[2026-09-09 14:51:15] [RAM: 1943.3 MB]   - SSH-Patator: 3,219 samples
+[2026-09-09 14:51:15] [RAM: 1943.3 MB]   - PortScan: 1,956 samples
+[2026-09-09 14:51:15] [RAM: 1943.3 MB]   - Web Attack-Brute Force: 1,470 samples
+[2026-09-09 14:51:15] [RAM: 1943.3 MB]   - Bot: 1,437 samples
+[2026-09-09 14:51:15] [RAM: 1943.3 MB]   - Web Attack-XSS: 652 samples
+[2026-09-09 14:51:15] [RAM: 1943.3 MB]   - Infiltration: 36 samples
+[2026-09-09 14:51:15] [RAM: 1943.3 MB]   - Web Attack-Sql Injection: 21 samples
+[2026-09-09 14:51:15] [RAM: 1943.3 MB]   - Heartbleed: 11 samples
+[2026-09-09 14:51:15] [RAM: 1943.3 MB] Splitting Train (70%) and Temp (30%)...
+[2026-09-09 14:51:19] [RAM: 2495.8 MB] Splitting Temp into Validation (15%) and Test (15%)...
+[2026-09-09 14:51:20] [RAM: 1996.3 MB] Split sizes:
+[2026-09-09 14:51:20] [RAM: 1996.3 MB]   Train: 1,562,264 samples (70.00%)
+[2026-09-09 14:51:20] [RAM: 1996.3 MB]   Val:   334,771 samples (15.00%)
+[2026-09-09 14:51:20] [RAM: 1996.3 MB]   Test:  334,771 samples (15.00%)
+
+================================================================================
+[2026-09-09 14:51:20] [RAM: 1479.1 MB] Step 8: Train-Only Feature Standardization (Pi_S Bounded Stats)
+================================================================================
+[2026-09-09 14:51:20] [RAM: 1479.1 MB] Computing statistics on 58 continuous features across 1,562,264 training samples...
+[2026-09-09 14:51:22] [RAM: 1479.1 MB] Applying standardization transform (X - mu_train) / sigma_train to Train split...
+[2026-09-09 14:51:23] [RAM: 1839.8 MB] Applying standardization transform to Validation split...
+[2026-09-09 14:51:23] [RAM: 1917.1 MB] Applying standardization transform to Test split...
+[2026-09-09 14:51:23] [RAM: 1994.4 MB] Standardization completed successfully.
+
+================================================================================
+[2026-09-09 14:51:23] [RAM: 1994.4 MB] Step 9: Artifact Persistence
+================================================================================
+[2026-09-09 14:51:23] [RAM: 2011.4 MB] Writing data\processed\X_train.parquet (1,562,264 rows x 71 cols)...
+[2026-09-09 14:51:28] [RAM: 1421.9 MB] Writing data\processed\X_train.csv...
+[2026-09-09 14:53:51] [RAM: 1430.7 MB] Writing data\processed\y_train.parquet (1,562,264 rows x 1 cols)...
+[2026-09-09 14:53:52] [RAM: 1440.1 MB] Writing data\processed\y_train.csv...
+[2026-09-09 14:53:52] [RAM: 1439.8 MB] Writing data\processed\X_val.parquet (334,771 rows x 71 cols)...
+[2026-09-09 14:53:53] [RAM: 1452.6 MB] Writing data\processed\X_val.csv...
+[2026-09-09 14:54:22] [RAM: 1452.7 MB] Writing data\processed\y_val.parquet (334,771 rows x 1 cols)...
+[2026-09-09 14:54:22] [RAM: 1412.2 MB] Writing data\processed\y_val.csv...
+[2026-09-09 14:54:22] [RAM: 1412.6 MB] Writing data\processed\X_test.parquet (334,771 rows x 71 cols)...
+[2026-09-09 14:54:23] [RAM: 1420.5 MB] Writing data\processed\X_test.csv...
+[2026-09-09 14:54:50] [RAM: 1421.0 MB] Writing data\processed\y_test.parquet (334,771 rows x 1 cols)...
+[2026-09-09 14:54:50] [RAM: 1413.4 MB] Writing data\processed\y_test.csv...
+[2026-09-09 14:54:50] [RAM: 1414.9 MB] All processed data splits successfully saved to disk.
+
+================================================================================
+[2026-09-09 14:54:51] [RAM: 1397.8 MB] Step 10: Metadata & Statistics Export
+================================================================================
+[2026-09-09 14:54:51] [RAM: 1397.9 MB] Preprocessing metadata saved to 'data\processed\preprocessing_stats.json'.
+
+================================================================================
+[2026-09-09 14:54:51] [RAM: 1397.9 MB] Final Preprocessing Summary
+================================================================================
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] Class                        | Train Count  | Val Count  | Test Count | Train %  | Val %    | Test %  
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] -----------------------------------------------------------------------------------------------
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] Benign                       | 1,326,720    | 284,297    | 284,297    | 84.923 % | 84.923 % | 84.923 %
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] Bot                          | 1,006        | 215        | 216        | 0.064  % | 0.064  % | 0.065  %
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] DDoS                         | 89,610       | 19,202     | 19,202     | 5.736  % | 5.736  % | 5.736  %
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] DoS GoldenEye                | 7,200        | 1,543      | 1,543      | 0.461  % | 0.461  % | 0.461  %
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] DoS Hulk                     | 120,992      | 25,927     | 25,927     | 7.745  % | 7.745  % | 7.745  %
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] DoS Slowhttptest             | 3,660        | 784        | 784        | 0.234  % | 0.234  % | 0.234  %
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] DoS slowloris                | 3,769        | 808        | 808        | 0.241  % | 0.241  % | 0.241  %
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] FTP-Patator                  | 4,152        | 890        | 889        | 0.266  % | 0.266  % | 0.266  %
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] Heartbleed                   | 8            | 1          | 2          | 0.001  % | 0.000  % | 0.001  %
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] Infiltration                 | 25           | 6          | 5          | 0.002  % | 0.002  % | 0.001  %
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] PortScan                     | 1,369        | 293        | 294        | 0.088  % | 0.088  % | 0.088  %
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] SSH-Patator                  | 2,253        | 483        | 483        | 0.144  % | 0.144  % | 0.144  %
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] Web Attack-Brute Force       | 1,029        | 221        | 220        | 0.066  % | 0.066  % | 0.066  %
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] Web Attack-Sql Injection     | 15           | 3          | 3          | 0.001  % | 0.001  % | 0.001  %
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] Web Attack-XSS               | 456          | 98         | 98         | 0.029  % | 0.029  % | 0.029  %
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] -----------------------------------------------------------------------------------------------
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] TOTAL                        | 1,562,264    | 334,771    | 334,771    | 100.000% | 100.000% | 100.000%
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] 
+Final feature count: 71
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] Total pipeline execution time: 239.34 seconds
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] Peak memory RSS: 1398.2 MB
+[2026-09-09 14:54:51] [RAM: 1398.2 MB] Pipeline finished successfully!
+
+
+================================================================================
+[2026-09-09 15:23:34] [RAM: 304.1 MB] AdvRoNIDS Clean Classifier Training (Model A - Section 6.2)
+================================================================================
+[2026-09-09 15:23:34] [RAM: 304.1 MB] Using Compute Device: cpu (Host CPU)
+
+================================================================================
+[2026-09-09 15:23:34] [RAM: 304.1 MB] Phase 2 - Step 1: Loading Processed Datasets & Constructing Tensors
+================================================================================
+[2026-09-09 15:23:34] [RAM: 304.1 MB] Reading parquet splits from 'data\processed'...
+[2026-09-09 15:23:36] [RAM: 1702.7 MB]   Train: X shape = (1562264, 71), y shape = (1562264, 1)
+[2026-09-09 15:23:36] [RAM: 1702.7 MB]   Val:   X shape = (334771, 71), y shape = (334771, 1)
+[2026-09-09 15:23:36] [RAM: 1702.7 MB]   Test:  X shape = (334771, 71), y shape = (334771, 1)
+
+[2026-09-09 15:23:36] [RAM: 1702.9 MB] --- Canonical Class Encoding (15 classes): ---
+[2026-09-09 15:23:36] [RAM: 1702.9 MB]   Index  0 -> 'Benign'
+[2026-09-09 15:23:36] [RAM: 1702.9 MB]   Index  1 -> 'Bot'
+[2026-09-09 15:23:36] [RAM: 1702.9 MB]   Index  2 -> 'DDoS'
+[2026-09-09 15:23:36] [RAM: 1702.9 MB]   Index  3 -> 'DoS GoldenEye'
+[2026-09-09 15:23:36] [RAM: 1702.9 MB]   Index  4 -> 'DoS Hulk'
+[2026-09-09 15:23:36] [RAM: 1702.9 MB]   Index  5 -> 'DoS Slowhttptest'
+[2026-09-09 15:23:36] [RAM: 1702.9 MB]   Index  6 -> 'DoS slowloris'
+[2026-09-09 15:23:36] [RAM: 1702.9 MB]   Index  7 -> 'FTP-Patator'
+[2026-09-09 15:23:36] [RAM: 1702.9 MB]   Index  8 -> 'Heartbleed'
+[2026-09-09 15:23:36] [RAM: 1702.9 MB]   Index  9 -> 'Infiltration'
+[2026-09-09 15:23:36] [RAM: 1702.9 MB]   Index 10 -> 'PortScan'
+[2026-09-09 15:23:36] [RAM: 1702.9 MB]   Index 11 -> 'SSH-Patator'
+[2026-09-09 15:23:36] [RAM: 1702.9 MB]   Index 12 -> 'Web Attack-Brute Force'
+[2026-09-09 15:23:36] [RAM: 1702.9 MB]   Index 13 -> 'Web Attack-Sql Injection'
+[2026-09-09 15:23:36] [RAM: 1702.9 MB]   Index 14 -> 'Web Attack-XSS'
+[2026-09-09 15:23:36] [RAM: 1702.9 MB] Exported label encoding mapping to 'data\processed\label_encoding.json'.
+[2026-09-09 15:23:38] [RAM: 2300.6 MB] Tensors successfully allocated in memory:
+[2026-09-09 15:23:38] [RAM: 2300.6 MB]   X_train: torch.Size([1562264, 71]), 423.1 MB
+[2026-09-09 15:23:38] [RAM: 2300.6 MB]   X_val:   torch.Size([334771, 71]), 90.7 MB
+[2026-09-09 15:23:38] [RAM: 2300.6 MB]   X_test:  torch.Size([334771, 71]), 90.7 MB
+
+================================================================================
+[2026-09-09 15:23:38] [RAM: 2300.6 MB] Phase 2 - Step 2: Computing Inverse Class Frequency Weights for Loss
+================================================================================
+[2026-09-09 15:23:38] [RAM: 2301.0 MB] Computed class weights (weight_c = N / (C * count_c)):
+[2026-09-09 15:23:38] [RAM: 2301.0 MB]   [ 0] Benign                     | Count: 1,326,720 | Weight:       0.0785
+[2026-09-09 15:23:38] [RAM: 2301.0 MB]   [ 1] Bot                        | Count:     1,006 | Weight:     103.5298
+[2026-09-09 15:23:38] [RAM: 2301.0 MB]   [ 2] DDoS                       | Count:    89,610 | Weight:       1.1623
+[2026-09-09 15:23:38] [RAM: 2301.0 MB]   [ 3] DoS GoldenEye              | Count:     7,200 | Weight:      14.4654
+[2026-09-09 15:23:38] [RAM: 2301.0 MB]   [ 4] DoS Hulk                   | Count:   120,992 | Weight:       0.8608
+[2026-09-09 15:23:38] [RAM: 2301.0 MB]   [ 5] DoS Slowhttptest           | Count:     3,660 | Weight:      28.4565
+[2026-09-09 15:23:38] [RAM: 2301.0 MB]   [ 6] DoS slowloris              | Count:     3,769 | Weight:      27.6336
+[2026-09-09 15:23:38] [RAM: 2301.0 MB]   [ 7] FTP-Patator                | Count:     4,152 | Weight:      25.0845
+[2026-09-09 15:23:38] [RAM: 2301.0 MB]   [ 8] Heartbleed                 | Count:         8 | Weight:   13018.8667
+[2026-09-09 15:23:38] [RAM: 2301.0 MB]   [ 9] Infiltration               | Count:        25 | Weight:    4166.0373
+[2026-09-09 15:23:38] [RAM: 2301.0 MB]   [10] PortScan                   | Count:     1,369 | Weight:      76.0781
+[2026-09-09 15:23:38] [RAM: 2301.0 MB]   [11] SSH-Patator                | Count:     2,253 | Weight:      46.2277
+[2026-09-09 15:23:38] [RAM: 2301.0 MB]   [12] Web Attack-Brute Force     | Count:     1,029 | Weight:     101.2157
+[2026-09-09 15:23:38] [RAM: 2301.0 MB]   [13] Web Attack-Sql Injection   | Count:        15 | Weight:    6943.3956
+[2026-09-09 15:23:38] [RAM: 2301.0 MB]   [14] Web Attack-XSS             | Count:       456 | Weight:     228.4012
+[2026-09-09 15:23:38] [RAM: 2302.1 MB] AdvRoNIDS_CNN Model Initialized with 40,719 trainable parameters.
+
+================================================================================
+[2026-09-09 15:23:41] [RAM: 2348.6 MB] Phase 2 - Step 3: Model A Clean Training Loop
+================================================================================
+[2026-09-09 15:23:41] [RAM: 2348.6 MB] Training configuration: Epochs=30, Patience=5, Batch Size=256, LR=0.001
+[2026-09-09 15:29:45] [RAM: 1986.3 MB] Epoch [01/30] Train Loss: 0.7546 | Val Loss: 0.6847 | Val Acc: 81.50% | Val Macro-F1: 0.2722 | Time: 363.2s [BEST CHECKPOINT SAVED]
+[2026-09-09 15:35:41] [RAM: 1982.1 MB] Epoch [02/30] Train Loss: 0.3888 | Val Loss: 0.2801 | Val Acc: 83.87% | Val Macro-F1: 0.3203 | Time: 356.6s [BEST CHECKPOINT SAVED]
+[2026-09-09 15:41:26] [RAM: 1981.1 MB] Epoch [03/30] Train Loss: 0.3149 | Val Loss: 0.2892 | Val Acc: 85.91% | Val Macro-F1: 0.3720 | Time: 345.2s [BEST CHECKPOINT SAVED]
+[2026-09-09 15:47:21] [RAM: 1981.4 MB] Epoch [04/30] Train Loss: 0.2752 | Val Loss: 0.2010 | Val Acc: 90.01% | Val Macro-F1: 0.4387 | Time: 355.1s [BEST CHECKPOINT SAVED]
+[2026-09-09 15:53:17] [RAM: 1984.1 MB] Epoch [05/30] Train Loss: 0.2583 | Val Loss: 0.2063 | Val Acc: 90.54% | Val Macro-F1: 0.5066 | Time: 355.3s [BEST CHECKPOINT SAVED]
+[2026-09-09 15:59:15] [RAM: 1983.4 MB] Epoch [06/30] Train Loss: 0.2527 | Val Loss: 0.1688 | Val Acc: 92.05% | Val Macro-F1: 0.4415 | Time: 358.1s 
+[2026-09-09 16:05:13] [RAM: 1986.4 MB] Epoch [07/30] Train Loss: 0.2442 | Val Loss: 0.1947 | Val Acc: 90.14% | Val Macro-F1: 0.4411 | Time: 358.2s 
+[2026-09-09 16:11:12] [RAM: 1985.8 MB] Epoch [08/30] Train Loss: 0.2220 | Val Loss: 0.1950 | Val Acc: 87.66% | Val Macro-F1: 0.3615 | Time: 359.2s 
+[2026-09-09 16:17:17] [RAM: 1987.4 MB] Epoch [09/30] Train Loss: 0.2228 | Val Loss: 0.1779 | Val Acc: 89.01% | Val Macro-F1: 0.4587 | Time: 364.5s 
+[2026-09-09 16:22:28] [RAM: 1988.0 MB] Epoch [10/30] Train Loss: 0.2207 | Val Loss: 0.2686 | Val Acc: 89.84% | Val Macro-F1: 0.3994 | Time: 311.1s 
+[2026-09-09 16:26:54] [RAM: 1988.4 MB] Epoch [11/30] Train Loss: 0.2157 | Val Loss: 5.3459 | Val Acc: 96.84% | Val Macro-F1: 0.3396 | Time: 266.1s 
+[2026-09-09 16:26:54] [RAM: 1988.4 MB] Early stopping triggered after 11 epochs (no validation loss improvement for 5 epochs).
+[2026-09-09 16:26:54] [RAM: 1988.4 MB] Training completed in 3792.68 seconds. Best checkpoint from Epoch 5 with Val Macro-F1 = 0.5066.
+[2026-09-09 16:26:56] [RAM: 2043.8 MB] Saved training curves plot to 'results\clean_model_training_curves.png'.
+
+================================================================================
+[2026-09-09 16:26:56] [RAM: 2043.8 MB] Phase 2 - Step 4: Comprehensive Held-Out Test Evaluation
+================================================================================
+[2026-09-09 16:26:56] [RAM: 2043.8 MB] Loading best checkpoint from 'checkpoints\clean_model_best.pt'...
+[2026-09-09 16:26:56] [RAM: 2018.1 MB] Loaded model checkpoint from Epoch 5 (Val Macro-F1: 0.5066)
+
+[2026-09-09 16:27:15] [RAM: 2013.9 MB] --- Test Set Evaluation Results: ---
+[2026-09-09 16:27:15] [RAM: 2013.9 MB]   Test Loss:        0.2224
+[2026-09-09 16:27:15] [RAM: 2013.9 MB]   Test Accuracy:    90.588%
+[2026-09-09 16:27:15] [RAM: 2013.9 MB]   Test Macro-F1:    0.5001
+[2026-09-09 16:27:15] [RAM: 2013.9 MB]   Test Weighted-F1: 0.9305
+
+[2026-09-09 16:27:16] [RAM: 2014.0 MB] --- Classification Report (Precision / Recall / F1-Score per Class): ---
+[2026-09-09 16:27:16] [RAM: 2014.0 MB] 
+                          precision    recall  f1-score   support
+
+                  Benign     0.9919    0.8974    0.9423    284297
+                     Bot     0.0203    0.9583    0.0398       216
+                    DDoS     0.7239    0.9996    0.8397     19202
+           DoS GoldenEye     0.6079    0.9929    0.7541      1543
+                DoS Hulk     0.9318    0.9197    0.9257     25927
+        DoS Slowhttptest     0.5490    0.9796    0.7036       784
+           DoS slowloris     0.8439    0.9703    0.9027       808
+             FTP-Patator     0.4424    0.9933    0.6121       889
+              Heartbleed     0.4000    1.0000    0.5714         2
+            Infiltration     0.0077    0.8000    0.0152         5
+                PortScan     0.1770    0.9422    0.2980       294
+             SSH-Patator     0.7530    0.9151    0.8262       483
+  Web Attack-Brute Force     0.0365    0.9318    0.0703       220
+Web Attack-Sql Injection     0.0000    0.0000    0.0000         3
+          Web Attack-XSS     0.0000    0.0000    0.0000        98
+
+                accuracy                         0.9059    334771
+               macro avg     0.4324    0.8200    0.5001    334771
+            weighted avg     0.9647    0.9059    0.9305    334771
+
+[2026-09-09 16:27:16] [RAM: 2014.0 MB] Saved classification report to 'results\clean_model_classification_report.txt'.
+[2026-09-09 16:27:16] [RAM: 2014.4 MB] Saved confusion matrix CSV to 'results\clean_model_confusion_matrix.csv'.
+[2026-09-09 16:27:17] [RAM: 2056.2 MB] Saved confusion matrix heatmap to 'results\clean_model_confusion_matrix.png'.
+[2026-09-09 16:27:17] [RAM: 2056.2 MB] Saved test metrics JSON to 'results\clean_model_test_metrics.json'.
+
+================================================================================
+[2026-09-09 16:27:17] [RAM: 2033.0 MB] Phase 2 (Model A Training & Evaluation) Complete!
+================================================================================
+
+================================================================================
+[2026-09-09 20:19:16] [RAM: 301.5 MB] Phase 3: Attack Vulnerability & Feasibility Benchmark (Section 6.3 - 6.4)
+================================================================================
+[2026-09-09 20:19:16] [RAM: 301.5 MB] Using Compute Device: cpu (Host CPU)
+
+[2026-09-09 20:19:16] [RAM: 301.5 MB] --- Loading test dataset from 'data\processed'... ---
+[2026-09-09 20:19:17] [RAM: 760.2 MB] Drawing stratified sample of 50,000 flows from 334,771 total test flows...
+[2026-09-09 20:19:17] [RAM: 682.0 MB] Evaluation sample tensor shape: X = torch.Size([50000, 71]), y = torch.Size([50000])
+[2026-09-09 20:19:17] [RAM: 680.1 MB] Feasibility Configuration: 17 Frozen features, 54 Perturbable features, 9 Cumulative counters.
+[2026-09-09 20:19:17] [RAM: 680.1 MB] Loading trained Model A checkpoint from './checkpoints/clean_model_best.pt'...
+
+[2026-09-09 20:19:17] [RAM: 681.9 MB] --- 1. Clean Baseline Evaluation on Evaluation Sample ---
+[2026-09-09 20:19:20] [RAM: 704.2 MB]   Clean Accuracy:    90.450%
+[2026-09-09 20:19:20] [RAM: 704.2 MB]   Clean Macro-F1:    0.4932
+[2026-09-09 20:19:20] [RAM: 704.2 MB]   Clean Weighted-F1: 0.9293
+
+[2026-09-09 20:19:20] [RAM: 704.2 MB] --- 2. Fast Gradient Sign Method (FGSM) Evaluation (epsilon = 0.1) ---
+[2026-09-09 20:19:29] [RAM: 734.6 MB]   FGSM [Unconstrained (Naive) ] | Accuracy: 40.444% | Macro-F1: 0.0693 | Weighted-F1: 0.5275 | Time: 8.9s
+[2026-09-09 20:19:38] [RAM: 735.5 MB]   FGSM [Constrained (Pi_S)    ] | Accuracy: 55.962% | Macro-F1: 0.1272 | Weighted-F1: 0.6581 | Time: 8.7s
+
+[2026-09-09 20:19:38] [RAM: 735.5 MB] --- 3. Projected Gradient Descent (PGD-7) Robustness Sweep across epsilons ---
+[2026-09-09 20:19:38] [RAM: 735.5 MB] 
+--- Testing PGD-7 with epsilon = 0.01 (alpha = 0.0025) ---
+[2026-09-09 20:20:21] [RAM: 736.9 MB]   PGD-7 [Unconstrained] | eps=0.01 | Accuracy: 81.400% | Macro-F1: 0.3687 | Violation Rate: 100.0% | Time: 43.3s
+[2026-09-09 20:21:06] [RAM: 737.7 MB]   PGD-7 [Constrained Pi_S] | eps=0.01 | Accuracy: 85.660% | Macro-F1: 0.4267 | Realistic Domain Evading | Time: 44.7s
+[2026-09-09 20:21:06] [RAM: 737.7 MB] 
+--- Testing PGD-7 with epsilon = 0.05 (alpha = 0.0125) ---
+[2026-09-09 20:21:51] [RAM: 737.9 MB]   PGD-7 [Unconstrained] | eps=0.05 | Accuracy: 28.580% | Macro-F1: 0.0868 | Violation Rate: 100.0% | Time: 45.4s
+[2026-09-09 20:22:37] [RAM: 736.9 MB]   PGD-7 [Constrained Pi_S] | eps=0.05 | Accuracy: 68.634% | Macro-F1: 0.1927 | Realistic Domain Evading | Time: 45.4s
+[2026-09-09 20:22:37] [RAM: 736.9 MB] 
+--- Testing PGD-7 with epsilon = 0.10 (alpha = 0.0250) ---
+[2026-09-09 20:23:22] [RAM: 738.2 MB]   PGD-7 [Unconstrained] | eps=0.10 | Accuracy:  4.020% | Macro-F1: 0.0213 | Violation Rate: 100.0% | Time: 45.0s
+[2026-09-09 20:24:08] [RAM: 738.1 MB]   PGD-7 [Constrained Pi_S] | eps=0.10 | Accuracy: 25.112% | Macro-F1: 0.0823 | Realistic Domain Evading | Time: 46.5s
+[2026-09-09 20:24:08] [RAM: 738.1 MB] 
+--- Testing PGD-7 with epsilon = 0.20 (alpha = 0.0500) ---
+[2026-09-09 20:24:54] [RAM: 738.5 MB]   PGD-7 [Unconstrained] | eps=0.20 | Accuracy:  0.406% | Macro-F1: 0.0006 | Violation Rate: 100.0% | Time: 46.3s
+[2026-09-09 20:25:40] [RAM: 727.5 MB]   PGD-7 [Constrained Pi_S] | eps=0.20 | Accuracy:  7.570% | Macro-F1: 0.0302 | Realistic Domain Evading | Time: 45.9s
+[2026-09-09 20:25:41] [RAM: 778.8 MB] Saved robustness degradation plot to 'results\robustness_curve_clean_model.png'.
+[2026-09-09 20:25:41] [RAM: 778.8 MB] Full vulnerability report successfully saved to 'results\attack_vulnerability_report.json'.
+
+================================================================================
+[2026-09-09 20:25:41] [RAM: 778.8 MB] Summary Table: Clean Model A Vulnerability (Section 8 Evaluation Baseline)
+================================================================================
+[2026-09-09 20:25:41] [RAM: 778.8 MB] Attack Configuration                | Epsilon  | Accuracy   | Macro-F1   | Feasibility Violation 
+[2026-09-09 20:25:41] [RAM: 778.8 MB] -----------------------------------------------------------------------------------------------
+[2026-09-09 20:25:41] [RAM: 778.8 MB] Clean Baseline (No Attack)          | 0.00     | 90.450%   | 0.4932     | 0.0% (N/A)            
+[2026-09-09 20:25:41] [RAM: 778.8 MB] FGSM [Unconstrained Naive]          | 0.10     | 40.444%   | 0.0693     | N/A                   
+[2026-09-09 20:25:41] [RAM: 778.8 MB] FGSM [Constrained Pi_S]             | 0.10     | 55.962%   | 0.1272     | 0.0% (Enforced)       
+[2026-09-09 20:25:41] [RAM: 778.8 MB] PGD-7 [Unconstrained Naive]         | 0.01     | 81.400%   | 0.3687     | 100.0% (Broken Rules)
+[2026-09-09 20:25:41] [RAM: 778.8 MB] PGD-7 [Constrained Pi_S]            | 0.01     | 85.660%   | 0.4267     | 0.0% (Enforced)       
+[2026-09-09 20:25:41] [RAM: 778.8 MB] PGD-7 [Unconstrained Naive]         | 0.05     | 28.580%   | 0.0868     | 100.0% (Broken Rules)
+[2026-09-09 20:25:41] [RAM: 778.8 MB] PGD-7 [Constrained Pi_S]            | 0.05     | 68.634%   | 0.1927     | 0.0% (Enforced)       
+[2026-09-09 20:25:41] [RAM: 778.8 MB] PGD-7 [Unconstrained Naive]         | 0.10     |  4.020%   | 0.0213     | 100.0% (Broken Rules)
+[2026-09-09 20:25:41] [RAM: 778.8 MB] PGD-7 [Constrained Pi_S]            | 0.10     | 25.112%   | 0.0823     | 0.0% (Enforced)       
+[2026-09-09 20:25:41] [RAM: 778.8 MB] PGD-7 [Unconstrained Naive]         | 0.20     |  0.406%   | 0.0006     | 100.0% (Broken Rules)
+[2026-09-09 20:25:41] [RAM: 778.8 MB] PGD-7 [Constrained Pi_S]            | 0.20     |  7.570%   | 0.0302     | 0.0% (Enforced)       
+[2026-09-09 20:25:41] [RAM: 778.8 MB] -----------------------------------------------------------------------------------------------
+[2026-09-09 20:25:41] [RAM: 778.8 MB] Phase 3 Evaluation Complete!
+

@@ -1,0 +1,49 @@
+{
+  "analysis": "AdvRoNIDS SHAP Attribution-Drift Analysis (Section 9.1)",
+  "timestamp": "2026-09-11 01:52:30",
+  "sample_size": 1000,
+  "background_reference_size": 50,
+  "perturbation_epsilon": 0.1,
+  "model_A_clean": {
+    "mean_attribution_drift": 1.8983983993530273,
+    "median_attribution_drift": 1.3202438354492188,
+    "std_attribution_drift": 1.6280627250671387,
+    "iqr_attribution_drift": [
+      1.0739243030548096,
+      1.6270439624786377
+    ],
+    "sample_clean_accuracy": 90.2,
+    "sample_adversarial_accuracy": 25.4
+  },
+  "model_B_robust": {
+    "mean_attribution_drift": 0.9225870370864868,
+    "median_attribution_drift": 0.5728126168251038,
+    "std_attribution_drift": 0.8771246671676636,
+    "iqr_attribution_drift": [
+      0.48639100790023804,
+      0.7558164596557617
+    ],
+    "sample_clean_accuracy": 91.3,
+    "sample_adversarial_accuracy": 89.1
+  },
+  "statistical_tests": {
+    "mean_drift_reduction_percentage": 51.40182177171441,
+    "mann_whitney_u": {
+      "statistic": 849313.0,
+      "p_value": 1.8653520285425665e-161,
+      "hypothesis": "Model A Drift > Model B Drift"
+    },
+    "wilcoxon_signed_rank": {
+      "statistic": 496352.0,
+      "p_value": 3.845967014996548e-160,
+      "hypothesis": "Model A Drift > Model B Drift (Paired)"
+    },
+    "effect_size": {
+      "rank_biserial_correlation": 0.698626,
+      "cliffs_delta": 0.698626,
+      "cliffs_delta_interpretation": "large",
+      "paired_rank_biserial_correlation": 0.983424
+    }
+  },
+  "illustrative_flows_evaluated": 8
+}

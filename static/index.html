@@ -1,0 +1,2813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdvRoNIDS | SOC War Room — Live Threat Monitoring & Defense Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #060911;
+            --bg-surface: #0c1322;
+            --bg-card: #131d31;
+            --bg-card-hover: #1a2742;
+            --border-color: #1e2d4a;
+            --border-highlight: #2e436d;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-amber: #f59e0b;
+            --accent-purple: #a855f7;
+            --terminal-bg: #070b14;
+            --terminal-border: #1a2436;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.08) 0%, transparent 60%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* CLEAN TOP NAVBAR */
+        /* ------------------------------------------------------------- */
+        header.main-navbar {
+            background: #090e1a;
+            border-bottom: 1px solid #1a2742;
+            padding: 12px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            position: sticky;
+            top: 0;
+        }
+
+        .brand-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-shield {
+            background: linear-gradient(135deg, #1d4ed8, #06b6d4);
+            color: #fff;
+            font-size: 1.15rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+
+        .brand-sub {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .live-status-pill {
+            margin-left: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.65rem;
+            font-weight: 700;
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            padding: 3px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ef4444;
+            box-shadow: 0 0 8px #ef4444;
+            animation: pulse-ring 1.5s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 12px #ef4444; }
+            100% { transform: scale(0.95); opacity: 0.7; }
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-pill-group {
+            display: flex;
+            background: #0d1527;
+            border: 1px solid #1a2742;
+            border-radius: 8px;
+            padding: 3px;
+            gap: 3px;
+        }
+
+        .nav-pill {
+            padding: 7px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-pill:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .nav-pill.active {
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(37, 99, 235, 0.4);
+        }
+
+        .audio-toggle-btn {
+            background: #0d1527;
+            border: 1px solid #1a2742;
+            color: var(--text-muted);
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .audio-toggle-btn:hover {
+            color: #fff;
+            border-color: var(--accent-cyan);
+        }
+
+        .audio-toggle-btn.active {
+            color: #38bdf8;
+            border-color: rgba(6, 182, 212, 0.6);
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.25);
+            background: rgba(6, 182, 212, 0.08);
+        }
+
+        /* ------------------------------------------------------------- */
+        /* DEDICATED 4-CARD HUD METRICS STRIP */
+        /* ------------------------------------------------------------- */
+        .soc-metrics-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .metric-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+            transition: border-color 0.2s;
+        }
+
+        .metric-card:hover {
+            border-color: var(--border-highlight);
+        }
+
+        .metric-icon-wrap {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .icon-blue { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); }
+        .icon-green { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .icon-red { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); }
+        .icon-cyan { background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); }
+
+        .metric-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            flex: 1;
+        }
+
+        .metric-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-num {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.2;
+        }
+
+        .text-green { color: #34d399; }
+        .text-red { color: #f87171; }
+        .text-cyan { color: #38bdf8; }
+
+        .metric-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-neutral { background: rgba(255, 255, 255, 0.06); color: var(--text-muted); }
+        .badge-green { background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-red { background: rgba(239, 68, 68, 0.12); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-cyan { background: rgba(6, 182, 212, 0.12); color: #38bdf8; border: 1px solid rgba(6, 182, 212, 0.3); }
+
+        .audio-toggle-btn.active {
+            color: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+        }
+
+        /* ------------------------------------------------------------- */
+        /* TAB CONTAINERS */
+        /* ------------------------------------------------------------- */
+        .tab-content {
+            display: none;
+            flex: 1;
+            padding: 20px 24px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* TAB 1: SOC WAR ROOM MODE (AUTONOMOUS) */
+        /* ------------------------------------------------------------- */
+        .soc-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 18px;
+            max-width: 1540px;
+            margin: 0 auto;
+        }
+
+        .soc-main-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* TOP CONTROL BAR (SOC MODE) */
+        .soc-hud-bar {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .hud-status-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .hud-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid var(--border-color);
+        }
+
+        .hud-badge.status-running {
+            background: rgba(16, 185, 129, 0.12);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: #34d399;
+        }
+
+        .hud-badge.status-paused {
+            background: rgba(245, 158, 11, 0.12);
+            border-color: rgba(245, 158, 11, 0.4);
+            color: #fbbf24;
+        }
+
+        .hud-controls-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hud-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hud-btn:hover {
+            background: var(--border-color);
+            border-color: var(--accent-blue);
+            color: #fff;
+        }
+
+        .hud-btn.btn-primary {
+            background: linear-gradient(135deg, #1d4ed8, #2563eb);
+            border: none;
+            box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
+        }
+
+        .hud-btn.btn-primary:hover {
+            box-shadow: 0 0 16px rgba(37, 99, 235, 0.6);
+            transform: translateY(-1px);
+        }
+
+        /* NETWORK TOPOLOGY VISUALIZER CARD */
+        .topology-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            box-shadow: 0 6px 30px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        .topology-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .topology-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ffffff;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            background: radial-gradient(circle at center, #0d1527 0%, #070c17 100%);
+            border: 1px solid #1a2742;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        #topologyCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Overlay Scanners and Gate HUD */
+        .topology-overlay-labels {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* DUAL VERDICT SCANNERS (RADIAL PROGRESS) */
+        .verdict-scanners-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .scanner-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .scanner-card.evaded-glow {
+            border-color: rgba(239, 68, 68, 0.7);
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), var(--bg-surface));
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.2);
+        }
+
+        .scanner-card.defended-glow {
+            border-color: rgba(16, 185, 129, 0.7);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), var(--bg-surface));
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.2);
+        }
+
+        .scanner-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .scanner-header-tag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .scanner-model-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .scanner-verdict-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #fff;
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .scanner-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* RADIAL PROGRESS CIRCLE */
+        .radial-gauge-wrap {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .radial-svg {
+            transform: rotate(-90deg);
+            width: 80px;
+            height: 80px;
+        }
+
+        .radial-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.08);
+            stroke-width: 6;
+        }
+
+        .radial-progress {
+            fill: none;
+            stroke-width: 6;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.6s ease, stroke 0.3s ease;
+            stroke-dasharray: 226; /* 2 * PI * 36 */
+            stroke-dashoffset: 226;
+        }
+
+        .radial-progress.progress-blue { stroke: var(--accent-blue); }
+        .radial-progress.progress-cyan { stroke: var(--accent-cyan); }
+        .radial-progress.progress-green { stroke: var(--accent-green); }
+        .radial-progress.progress-red { stroke: var(--accent-red); }
+        .radial-progress.progress-amber { stroke: var(--accent-amber); }
+
+        .radial-text {
+            position: absolute;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+        }
+
+        .radial-subtext {
+            font-size: 0.55rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* RIGHT TERMINAL / EVENT STREAM PANEL */
+        /* ------------------------------------------------------------- */
+        .soc-side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .terminal-panel {
+            background: var(--terminal-bg);
+            border: 1px solid var(--terminal-border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            height: 520px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            background: #0d1424;
+            border-bottom: 1px solid var(--terminal-border);
+            padding: 8px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .terminal-title {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .terminal-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .tdot-red { background: #ef4444; }
+        .tdot-yellow { background: #f59e0b; }
+        .tdot-green { background: #10b981; }
+
+        .terminal-body {
+            flex: 1;
+            padding: 12px 14px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.74rem;
+            line-height: 1.55;
+            color: #cbd5e1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            scroll-behavior: smooth;
+        }
+
+        .terminal-body::-webkit-scrollbar {
+            width: 4px;
+        }
+        .terminal-body::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+
+        .log-entry {
+            word-break: break-word;
+            animation: fadeInLog 0.25s ease-out;
+        }
+
+        @keyframes fadeInLog {
+            from { opacity: 0; transform: translateX(-4px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .log-entry.log-threat {
+            color: #fca5a5;
+            border-left: 2px solid #ef4444;
+            padding-left: 6px;
+        }
+
+        .log-entry.log-evasion {
+            color: #f87171;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .log-entry.log-defended {
+            color: #6ee7b7;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .log-entry.log-clean {
+            color: #93c5fd;
+        }
+
+        .terminal-footer {
+            background: #090e1a;
+            border-top: 1px solid var(--terminal-border);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .auto-scroll-label {
+            font-size: 0.68rem;
+            color: var(--text-dim);
+            font-family: 'Fira Code', monospace;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* AI TRIAGE NARRATION CARD */
+        /* ------------------------------------------------------------- */
+        .soc-triage-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .triage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .triage-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #fff;
+        }
+
+        .triage-note-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.78rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+            min-height: 70px;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* EXPANDABLE FULL TELEMETRY DRAWER */
+        /* ------------------------------------------------------------- */
+        .telemetry-drawer-toggle {
+            background: var(--bg-surface);
+            border: 1px dashed var(--border-highlight);
+            border-radius: 10px;
+            padding: 12px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .telemetry-drawer-toggle:hover {
+            border-color: var(--accent-blue);
+            color: #fff;
+            background: var(--bg-card);
+        }
+
+        .telemetry-drawer-content {
+            display: none;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .telemetry-drawer-content.open {
+            display: flex;
+        }
+
+        .l2-norm-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+        }
+
+        /* Plain-language tooltips & tech tables */
+        table.telemetry-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        table.telemetry-table th {
+            text-align: left;
+            padding: 10px 12px;
+            background: var(--bg-card);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        table.telemetry-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            vertical-align: middle;
+        }
+
+        .tooltip-wrap {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: help;
+        }
+
+        .info-bubble {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent-cyan);
+            font-size: 0.65rem;
+            font-family: 'Fira Code', monospace;
+            font-weight: 700;
+        }
+
+        .tooltip-box {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            background: #0f172a;
+            border: 1px solid var(--accent-blue);
+            color: #f8fafc;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.74rem;
+            line-height: 1.4;
+            min-width: 250px;
+            max-width: 320px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+            transform: translateY(4px);
+            z-index: 999;
+        }
+
+        .tooltip-wrap:hover .tooltip-box {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .tooltip-header {
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tooltip-tag {
+            font-size: 0.65rem;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .tooltip-tag-frozen { background: rgba(14, 165, 233, 0.2); color: #38bdf8; }
+        .tooltip-tag-perturb { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+
+        .tooltip-raw {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.68rem;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+
+        .tooltip-desc {
+            color: #cbd5e1;
+        }
+
+        .frozen-tag, .perturb-tag {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .frozen-tag {
+            background: rgba(14, 165, 233, 0.15);
+            color: #38bdf8;
+            border: 1px solid rgba(14, 165, 233, 0.3);
+        }
+
+        .perturb-tag {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .delta-val {
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+        }
+        .delta-pos { color: #f87171; }
+        .delta-neg { color: #60a5fa; }
+
+        .raw-tech-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.68rem;
+            background: rgba(255, 255, 255, 0.06);
+            color: #94a3b8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 4px;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* TAB 2 & 3 REUSED STYLES (INVESTIGATE & CURATED BENCHMARK) */
+        /* ------------------------------------------------------------- */
+        .manual-controls-bar {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .field-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .field-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select, input[type="range"] {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        select:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 3px;
+            gap: 3px;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn.active {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .playback-bar {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timeline-steps {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-node {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .step-node.active {
+            background: var(--accent-blue);
+            border-color: #93c5fd;
+            color: white;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+            transform: scale(1.15);
+        }
+
+        .step-node.flipped-node {
+            border-color: var(--accent-red);
+            background: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .demo-layout-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .flow-card-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        .flow-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .flow-card:hover {
+            border-color: var(--border-highlight);
+            background: var(--bg-card);
+        }
+
+        .flow-card.active {
+            border-color: var(--accent-blue);
+            background: var(--bg-card);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .flow-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .flow-card-id {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .flow-card-class {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-clean { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-evaded { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-defended { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1100px) {
+            .soc-grid { grid-template-columns: 1fr; }
+            .terminal-panel { height: 350px; }
+            .soc-metrics-strip { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 700px) {
+            header.main-navbar { flex-direction: column; gap: 12px; align-items: flex-start; }
+            .nav-actions { width: 100%; justify-content: space-between; }
+            .soc-metrics-strip { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ------------------------------------------------------------- -->
+    <!-- CLEAN ENTERPRISE TOP NAVBAR -->
+    <!-- ------------------------------------------------------------- -->
+    <header class="main-navbar">
+        <div class="brand-group">
+            <div class="logo-shield">🛡️</div>
+            <div class="brand-text">
+                <span class="brand-name">AdvRoNIDS</span>
+                <span class="brand-sub">Robust Network Intrusion Detection Suite</span>
+            </div>
+            <span class="live-status-pill"><span class="pulse-dot"></span> LIVE ENGINE</span>
+        </div>
+
+        <div class="nav-actions">
+            <button class="audio-toggle-btn active" id="audio-toggle-btn" onclick="toggleAudio()" title="Toggle Web Audio Synthesizer">
+                <span id="audio-icon">🔊</span>
+                <span>Audio Alert</span>
+            </button>
+
+            <nav class="nav-pill-group">
+                <button class="nav-pill active" id="tab-btn-soc" onclick="switchTab('soc')">
+                    <span>🔴</span> Live Monitoring
+                </button>
+                <button class="nav-pill" id="tab-btn-manual" onclick="switchTab('manual')">
+                    <span>⚡</span> Investigate Attack
+                </button>
+                <button class="nav-pill" id="tab-btn-curated" onclick="switchTab('curated')">
+                    <span>📑</span> Benchmark Flows
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ------------------------------------------------------------- -->
+    <!-- TAB 1: SOC WAR ROOM MODE (AUTONOMOUS NETWORK FEED) -->
+    <!-- ------------------------------------------------------------- -->
+    <main id="tab-soc" class="tab-content active">
+        
+        <!-- 4-CARD SESSION METRICS HUD BANNER -->
+        <div class="soc-metrics-strip">
+            <div class="metric-card">
+                <div class="metric-icon-wrap icon-blue">⚡</div>
+                <div class="metric-content">
+                    <span class="metric-title">Flows Intercepted</span>
+                    <span class="metric-num" id="ticker-flows-count">0</span>
+                </div>
+                <span class="metric-badge badge-neutral">Streaming</span>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon-wrap icon-green">🛡️</div>
+                <div class="metric-content">
+                    <span class="metric-title">Caught by Model B</span>
+                    <span class="metric-num text-green" id="ticker-b-caught">0</span>
+                </div>
+                <span class="metric-badge badge-green">Robust Defense</span>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon-wrap icon-red">⚠️</div>
+                <div class="metric-content">
+                    <span class="metric-title">Missed by Model A</span>
+                    <span class="metric-num text-red" id="ticker-a-missed">0</span>
+                </div>
+                <span class="metric-badge badge-red">Evaded Baseline</span>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon-wrap icon-cyan">🎯</div>
+                <div class="metric-content">
+                    <span class="metric-title">Model B Defense Rate</span>
+                    <span class="metric-num text-cyan" id="ticker-defense-rate">100.0%</span>
+                </div>
+                <span class="metric-badge badge-cyan">Resilience</span>
+            </div>
+        </div>
+
+        <div class="soc-grid">
+            
+            <!-- LEFT MAIN STAGE -->
+            <div class="soc-main-panel">
+                
+                <!-- TOP HUD BAR -->
+                <div class="soc-hud-bar">
+                    <div class="hud-status-group">
+                        <span class="hud-badge status-running" id="feed-status-badge">
+                            <span class="pulse-dot"></span>
+                            <span id="feed-status-text">Autonomous Interception Active</span>
+                        </span>
+                        <div class="hud-badge">
+                            <span style="color:var(--text-dim);">Current Flow:</span>
+                            <span style="font-family:'Fira Code', monospace; color:var(--accent-cyan);" id="hud-flow-id">flow_init_ready</span>
+                        </div>
+                        <div class="hud-badge" id="hud-threat-type-badge">
+                            <span>Traffic Profile:</span>
+                            <strong style="color:#fff;" id="hud-threat-name">Awaiting Packet...</strong>
+                        </div>
+                    </div>
+
+                    <div class="hud-controls-group">
+                        <button class="hud-btn" id="feed-pause-btn" onclick="toggleAutonomousFeed()">
+                            <span id="feed-pause-icon">⏸</span>
+                            <span id="feed-pause-label">Pause Feed</span>
+                        </button>
+                        <button class="hud-btn btn-primary" onclick="triggerManualTick()">
+                            <span>⚡</span> Next Flow Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- NETWORK TOPOLOGY CANVAS VISUALIZER -->
+                <div class="topology-card">
+                    <div class="topology-header">
+                        <div class="topology-title">
+                            <span>🌐 Live Network Pipeline & Gate Defense Visualizer</span>
+                        </div>
+                        <div style="font-size:0.75rem; color:var(--text-muted); display:flex; gap:12px;">
+                            <span>Origin: <strong style="color:var(--accent-blue);">Source Node</strong></span>
+                            <span>→ Inspection: <strong style="color:var(--accent-cyan);">NIDS Hub</strong></span>
+                            <span>→ Checkpoints: <strong style="color:var(--accent-amber);">Model A & B Gates</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="canvas-container">
+                        <canvas id="topologyCanvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- DUAL VERDICT SCANNERS (RADIAL PROGRESS GAUGE) -->
+                <div class="verdict-scanners-grid">
+                    
+                    <!-- MODEL A SCANNER (CLEAN BASELINE) -->
+                    <div class="scanner-card" id="scanner-card-a">
+                        <div class="scanner-info">
+                            <div class="scanner-header-tag">
+                                <span class="scanner-model-name" style="color:var(--accent-blue);">Model A (Standard Baseline)</span>
+                                <span class="badge" id="scanner-badge-a">STANDBY</span>
+                            </div>
+                            <div class="scanner-verdict-title" id="scanner-verdict-a">
+                                <span>Awaiting Traffic</span>
+                            </div>
+                            <div class="scanner-subtitle" id="scanner-sub-a">
+                                Vulnerable to unconstrained & constrained feature manipulation
+                            </div>
+                        </div>
+
+                        <!-- Radial Progress Ring A -->
+                        <div class="radial-gauge-wrap">
+                            <svg class="radial-svg" viewBox="0 0 80 80">
+                                <circle class="radial-bg" cx="40" cy="40" r="36" />
+                                <circle class="radial-progress progress-blue" id="radial-ring-a" cx="40" cy="40" r="36" />
+                            </svg>
+                            <div class="radial-text">
+                                <span id="radial-val-a">--%</span>
+                                <div class="radial-subtext">Conf</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MODEL B SCANNER (ADVRONIDS ROBUST) -->
+                    <div class="scanner-card" id="scanner-card-b">
+                        <div class="scanner-info">
+                            <div class="scanner-header-tag">
+                                <span class="scanner-model-name" style="color:var(--accent-green);">Model B (AdvRoNIDS Robust)</span>
+                                <span class="badge badge-defended" id="scanner-badge-b">STANDBY</span>
+                            </div>
+                            <div class="scanner-verdict-title" id="scanner-verdict-b">
+                                <span>Awaiting Traffic</span>
+                            </div>
+                            <div class="scanner-subtitle" id="scanner-sub-b">
+                                Anchored to structural protocol invariants (Π_S projection)
+                            </div>
+                        </div>
+
+                        <!-- Radial Progress Ring B -->
+                        <div class="radial-gauge-wrap">
+                            <svg class="radial-svg" viewBox="0 0 80 80">
+                                <circle class="radial-bg" cx="40" cy="40" r="36" />
+                                <circle class="radial-progress progress-green" id="radial-ring-b" cx="40" cy="40" r="36" />
+                            </svg>
+                            <div class="radial-text">
+                                <span id="radial-val-b">--%</span>
+                                <div class="radial-subtext">Conf</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- EXPANDABLE FULL TELEMETRY DRAWER -->
+                <div class="telemetry-drawer-toggle" onclick="toggleTelemetryDrawer()">
+                    <span>🔍 View Full Feature Perturbation Telemetry & Metrics</span>
+                    <span id="telemetry-drawer-icon">▼ Expand</span>
+                </div>
+
+                <div class="telemetry-drawer-content" id="telemetry-drawer-content">
+                    <div class="l2-norm-strip">
+                        <span>Perturbation Norms:</span>
+                        <span style="color:var(--accent-red);" id="soc-l2-a">||Δ_A||₂ = 0.0000</span>
+                        <span style="color:var(--accent-cyan);" id="soc-l2-b">||Δ_B||₂ = 0.0000</span>
+                        <span style="color:var(--text-muted);" id="soc-feasibility-note">Projection: Π_S Invariants Enforced</span>
+                    </div>
+
+                    <table class="telemetry-table">
+                        <thead>
+                            <tr>
+                                <th>Flow Metric</th>
+                                <th>Protocol Role</th>
+                                <th style="text-align: right;">Model A Shift (Δ_A)</th>
+                                <th style="text-align: right;">Model B Shift (Δ_B)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="soc-telemetry-tbody">
+                            <tr>
+                                <td colspan="4" style="text-align:center; color:var(--text-muted); padding:16px;">
+                                    Waiting for first traffic tick to stream telemetry...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <!-- RIGHT TERMINAL & TRIAGE STREAM -->
+            <div class="soc-side-panel">
+                
+                <!-- MOVIE-STYLE ROLLING CYBER TERMINAL -->
+                <div class="terminal-panel">
+                    <div class="terminal-header">
+                        <div class="terminal-title">
+                            <span>⚡ SOC Security Event Log</span>
+                        </div>
+                        <div class="terminal-dots">
+                            <span class="terminal-dot tdot-red"></span>
+                            <span class="terminal-dot tdot-yellow"></span>
+                            <span class="terminal-dot tdot-green"></span>
+                        </div>
+                    </div>
+
+                    <div class="terminal-body" id="soc-terminal-feed">
+                        <div class="log-entry log-clean">> [SYSTEM] AdvRoNIDS Real-Time SOC Monitor Initialized.</div>
+                        <div class="log-entry">> [SYSTEM] Connected to neural inference backend. Autonomous polling active...</div>
+                    </div>
+
+                    <div class="terminal-footer">
+                        <span class="auto-scroll-label">● STREAMING 60FPS</span>
+                        <button class="hud-btn" style="padding:2px 8px; font-size:0.68rem;" onclick="clearTerminalLogs()">Clear Log</button>
+                    </div>
+                </div>
+
+                <!-- INCIDENT TRIAGE CARD -->
+                <div class="soc-triage-card">
+                    <div class="triage-header">
+                        <div class="triage-title">
+                            <span>🤖 LLM Incident Triage Narration</span>
+                        </div>
+                        <button class="hud-btn" style="padding:4px 10px; font-size:0.75rem;" id="soc-triage-btn" onclick="generateSocTriageNote()">
+                            Synthesize Note
+                        </button>
+                    </div>
+                    <div class="triage-note-box" id="soc-triage-text">
+                        Awaiting incident analysis. Click "Synthesize Note" to generate a plain-language SOC briefing for the active flow.
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ------------------------------------------------------------- -->
+    <!-- TAB 2: INVESTIGATE ATTACK (MANUAL SIMULATOR) -->
+    <!-- ------------------------------------------------------------- -->
+    <main id="tab-manual" class="tab-content">
+        <div style="max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px;">
+            
+            <!-- Manual Control Bar -->
+            <div class="manual-controls-bar">
+                <div class="control-group">
+                    <div class="field-item">
+                        <span class="field-label">Attack Profile</span>
+                        <select id="sim-category-select" style="min-width: 220px;"></select>
+                    </div>
+
+                    <div class="field-item">
+                        <span class="field-label">Constraints (Pi_S)</span>
+                        <div class="toggle-switch">
+                            <button id="toggle-constrained" class="toggle-btn active" onclick="setConstraintMode(true)">Realistic (Domain)</button>
+                            <button id="toggle-unconstrained" class="toggle-btn" onclick="setConstraintMode(false)">Unconstrained (Naive)</button>
+                        </div>
+                    </div>
+
+                    <div class="field-item">
+                        <span class="field-label">Epsilon (Perturbation Budget)</span>
+                        <div class="control-group" style="gap:8px;">
+                            <input type="range" id="sim-eps-slider" min="0.01" max="0.30" step="0.01" value="0.10" oninput="onEpsChange()">
+                            <span style="font-family:'Fira Code', monospace; color:var(--accent-cyan);" id="sim-eps-val">0.10</span>
+                        </div>
+                    </div>
+
+                    <div class="field-item">
+                        <span class="field-label">PGD Steps</span>
+                        <div class="control-group" style="gap:8px;">
+                            <input type="range" id="sim-steps-slider" min="3" max="15" step="1" value="7" oninput="onStepsChange()">
+                            <span style="font-family:'Fira Code', monospace; color:var(--accent-cyan);" id="sim-steps-val">7</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="hud-btn btn-primary" id="launch-sim-btn" onclick="launchManualSimulation()" style="padding:10px 20px;">
+                    <span>🚀 Launch Step Attack</span>
+                </button>
+            </div>
+
+            <!-- Scrub Timeline -->
+            <div class="playback-bar">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button class="hud-btn" onclick="togglePlayPause()" id="play-pause-btn">▶ Play</button>
+                    <button class="hud-btn" onclick="stepBackward()">⏮</button>
+                    <button class="hud-btn" onclick="stepForward()">⏭</button>
+                    <span class="hud-badge" id="current-step-pill">Step 0 (Clean Baseline)</span>
+                </div>
+                <div class="timeline-steps" id="timeline-steps"></div>
+            </div>
+
+            <!-- Dual Manual Result Scanners -->
+            <div class="verdict-scanners-grid">
+                <div class="scanner-card" id="manual-card-a">
+                    <div class="scanner-info">
+                        <div class="scanner-header-tag">
+                            <span class="scanner-model-name" style="color:var(--accent-blue);">Model A (Standard Baseline)</span>
+                            <span class="badge" id="manual-badge-a">STANDBY</span>
+                        </div>
+                        <div class="scanner-verdict-title" id="manual-verdict-a">--</div>
+                        <div class="scanner-subtitle" id="manual-sub-a">True class confidence under attack</div>
+                    </div>
+                    <div class="radial-gauge-wrap">
+                        <svg class="radial-svg" viewBox="0 0 80 80">
+                            <circle class="radial-bg" cx="40" cy="40" r="36" />
+                            <circle class="radial-progress progress-blue" id="manual-radial-a" cx="40" cy="40" r="36" />
+                        </svg>
+                        <div class="radial-text">
+                            <span id="manual-conf-a">--%</span>
+                            <div class="radial-subtext">Conf</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scanner-card" id="manual-card-b">
+                    <div class="scanner-info">
+                        <div class="scanner-header-tag">
+                            <span class="scanner-model-name" style="color:var(--accent-green);">Model B (AdvRoNIDS Robust)</span>
+                            <span class="badge badge-defended" id="manual-badge-b">STANDBY</span>
+                        </div>
+                        <div class="scanner-verdict-title" id="manual-verdict-b">--</div>
+                        <div class="scanner-subtitle" id="manual-sub-b">True class confidence under attack</div>
+                    </div>
+                    <div class="radial-gauge-wrap">
+                        <svg class="radial-svg" viewBox="0 0 80 80">
+                            <circle class="radial-bg" cx="40" cy="40" r="36" />
+                            <circle class="radial-progress progress-green" id="manual-radial-b" cx="40" cy="40" r="36" />
+                        </svg>
+                        <div class="radial-text">
+                            <span id="manual-conf-b">--%</span>
+                            <div class="radial-subtext">Conf</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manual Step Telemetry Table -->
+            <div class="telemetry-drawer-content open">
+                <table class="telemetry-table">
+                    <thead>
+                        <tr>
+                            <th>Feature Name</th>
+                            <th>Feasibility Mask</th>
+                            <th style="text-align: right;">Model A Shift (Δ_A)</th>
+                            <th style="text-align: right;">Model B Shift (Δ_B)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="manual-telemetry-tbody">
+                        <tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:16px;">Launch a simulation to inspect step-level perturbations</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ------------------------------------------------------------- -->
+    <!-- TAB 3: BENCHMARK DEMO FLOWS -->
+    <!-- ------------------------------------------------------------- -->
+    <main id="tab-curated" class="tab-content">
+        <div class="demo-layout-grid">
+            <div class="flow-card-list" id="flow-list"></div>
+            
+            <div style="display:flex; flex-direction:column; gap:16px;">
+                <div class="soc-hud-bar">
+                    <div>
+                        <h2 style="font-family:'Outfit', sans-serif; font-size:1.1rem;" id="demo-flow-title">Selected Flow</h2>
+                        <div style="font-size:0.75rem; color:var(--text-muted);" id="demo-flow-subtitle">Ground Truth: Benign</div>
+                    </div>
+                    <button class="hud-btn btn-primary" id="demo-regen-btn" onclick="triggerDemoTriage()">
+                        Generate AI Incident Report
+                    </button>
+                </div>
+
+                <div class="verdict-scanners-grid">
+                    <div class="scanner-card" id="demo-card-a">
+                        <div class="scanner-info">
+                            <div class="scanner-header-tag">
+                                <span class="scanner-model-name" style="color:var(--accent-blue);">Model A Baseline</span>
+                                <span class="badge" id="demo-badge-a">--</span>
+                            </div>
+                            <div class="scanner-verdict-title" id="demo-verdict-a">--</div>
+                        </div>
+                        <div class="radial-gauge-wrap">
+                            <svg class="radial-svg" viewBox="0 0 80 80">
+                                <circle class="radial-bg" cx="40" cy="40" r="36" />
+                                <circle class="radial-progress progress-blue" id="demo-radial-a" cx="40" cy="40" r="36" />
+                            </svg>
+                            <div class="radial-text"><span id="demo-conf-a">--%</span></div>
+                        </div>
+                    </div>
+
+                    <div class="scanner-card" id="demo-card-b">
+                        <div class="scanner-info">
+                            <div class="scanner-header-tag">
+                                <span class="scanner-model-name" style="color:var(--accent-green);">Model B Robust</span>
+                                <span class="badge" id="demo-badge-b">--</span>
+                            </div>
+                            <div class="scanner-verdict-title" id="demo-verdict-b">--</div>
+                        </div>
+                        <div class="radial-gauge-wrap">
+                            <svg class="radial-svg" viewBox="0 0 80 80">
+                                <circle class="radial-bg" cx="40" cy="40" r="36" />
+                                <circle class="radial-progress progress-green" id="demo-radial-b" cx="40" cy="40" r="36" />
+                            </svg>
+                            <div class="radial-text"><span id="demo-conf-b">--%</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="soc-triage-card">
+                    <div class="triage-title">📑 Automated Triage Briefing</div>
+                    <div class="triage-note-box" id="demo-note-text">Select a benchmark flow to generate incident analysis.</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ------------------------------------------------------------- -->
+    <!-- CLIENT JAVASCRIPT & SOUND SYNTHESIZER & CANVAS ENGINE -->
+    <!-- ------------------------------------------------------------- -->
+    <script>
+        // Catalogs & State
+        let featureCatalog = {};
+        let attackCatalog = {};
+
+        let activeTab = 'soc';
+        let isAudioEnabled = true;
+        let audioCtx = null;
+
+        // Scoreboard Ticker Accumulators
+        let totalFlowsCount = 0;
+        let totalBCaught = 0;
+        let totalAMissed = 0;
+
+        // Autonomous Feed State
+        let isAutonomousRunning = true;
+        let autonomousTimer = null;
+        let currentAutonomousData = null;
+
+        // Manual Simulator State
+        let isConstrained = true;
+        let currentManualData = null;
+        let manualStep = 0;
+        let manualInterval = null;
+        let isManualPlaying = false;
+
+        // Benchmark Demo State
+        let demoFlows = [];
+        let currentDemoIndex = 0;
+
+        // -------------------------------------------------------------
+        // WEB AUDIO SYNTHESIZER (Native Browser Oscillator Alerts)
+        // -------------------------------------------------------------
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) {
+                    audioCtx = new AudioContextClass();
+                }
+            }
+        }
+
+        function playSound(type) {
+            if (!isAudioEnabled) return;
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'intercept') {
+                    // Short soft high chirp
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(880, now);
+                    osc.frequency.exponentialRampToValueAtTime(1320, now + 0.08);
+                    gain.gain.setValueAtTime(0.04, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'defended') {
+                    // Pleasant affirmative double chime
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+                    gain.gain.setValueAtTime(0.05, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+                    osc.start(now);
+                    osc.stop(now + 0.22);
+                } else if (type === 'evaded') {
+                    // War Room warning buzzer
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(260, now);
+                    osc.frequency.setValueAtTime(210, now + 0.12);
+                    gain.gain.setValueAtTime(0.06, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+                    osc.start(now);
+                    osc.stop(now + 0.26);
+                }
+            } catch (e) {
+                // Audio autoplay or web audio restriction guard
+            }
+        }
+
+        function toggleAudio() {
+            isAudioEnabled = !isAudioEnabled;
+            const btn = document.getElementById('audio-toggle-btn');
+            const icon = document.getElementById('audio-icon');
+            if (isAudioEnabled) {
+                btn.className = 'audio-toggle-btn active';
+                icon.innerText = '🔊';
+                playSound('defended');
+            } else {
+                btn.className = 'audio-toggle-btn';
+                icon.innerText = '🔇';
+            }
+        }
+
+        // -------------------------------------------------------------
+        // TRANSLATION LAYER HELPERS
+        // -------------------------------------------------------------
+        function getAttackInfo(rawClass) {
+            if (!rawClass) return { display_name: 'Unknown', description: 'Unclassified network traffic', raw_name: 'Unknown', category: 'General' };
+            if (attackCatalog && attackCatalog[rawClass]) return attackCatalog[rawClass];
+            return {
+                display_name: rawClass.replace(/_/g, ' '),
+                description: 'Network traffic flow',
+                raw_name: rawClass,
+                category: 'Threat'
+            };
+        }
+
+        function getFeatureInfo(rawFeat) {
+            if (!rawFeat) return { label: 'Unknown Metric', tooltip: 'Network flow measurement', category: 'General', is_frozen: false, raw_name: 'Unknown' };
+            if (featureCatalog && featureCatalog[rawFeat]) return featureCatalog[rawFeat];
+            return {
+                label: rawFeat.replace(/_/g, ' '),
+                tooltip: 'Network connection measurement',
+                category: 'General',
+                is_frozen: false,
+                raw_name: rawFeat
+            };
+        }
+
+        function renderFeatureCellHtml(rawFeat) {
+            const info = getFeatureInfo(rawFeat);
+            const isFrz = info.is_frozen;
+            return `
+                <div class="tooltip-wrap">
+                    <div>
+                        <span style="font-weight:600; color:#fff;">${info.label}</span>
+                        <span class="raw-tech-badge">${info.raw_name}</span>
+                    </div>
+                    <span class="info-bubble">ⓘ</span>
+                    <div class="tooltip-box">
+                        <div class="tooltip-header">
+                            <span>${info.label}</span>
+                            <span class="tooltip-tag ${isFrz ? 'tooltip-tag-frozen' : 'tooltip-tag-perturb'}">${isFrz ? 'Protocol Invariant' : 'Manipulable'}</span>
+                        </div>
+                        <div class="tooltip-raw">Dataset Column: ${info.raw_name} (${info.category || 'Metric'})</div>
+                        <div class="tooltip-desc">${info.tooltip}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAttackBadgeHtml(rawClass) {
+            const info = getAttackInfo(rawClass);
+            return `
+                <div class="tooltip-wrap">
+                    <span>${info.display_name}</span>
+                    <span class="raw-tech-badge">${rawClass}</span>
+                    <span class="info-bubble">ⓘ</span>
+                    <div class="tooltip-box">
+                        <div class="tooltip-header">
+                            <span>${info.display_name}</span>
+                            <span class="tooltip-tag tooltip-tag-perturb">${info.category || 'Threat'}</span>
+                        </div>
+                        <div class="tooltip-raw">Class ID: ${rawClass}</div>
+                        <div class="tooltip-desc">${info.description}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // -------------------------------------------------------------
+        // INITIALIZATION
+        // -------------------------------------------------------------
+        async function init() {
+            await loadTranslationCatalogs();
+            await loadCategories();
+            loadDemoFlows();
+            initTopologyCanvas();
+            startAutonomousFeed();
+        }
+
+        async function loadTranslationCatalogs() {
+            try {
+                const [fRes, aRes] = await Promise.all([
+                    fetch('/feature-labels').catch(() => fetch('/static/feature_labels.json')),
+                    fetch('/attack-labels').catch(() => fetch('/static/attack_labels.json'))
+                ]);
+                if (fRes && fRes.ok) featureCatalog = await fRes.json();
+                if (aRes && aRes.ok) attackCatalog = await aRes.json();
+            } catch (e) {
+                console.warn('Failed to load translation catalogs:', e);
+            }
+        }
+
+        function switchTab(tab) {
+            activeTab = tab;
+            document.getElementById('tab-soc').className = `tab-content ${tab === 'soc' ? 'active' : ''}`;
+            document.getElementById('tab-manual').className = `tab-content ${tab === 'manual' ? 'active' : ''}`;
+            document.getElementById('tab-curated').className = `tab-content ${tab === 'curated' ? 'active' : ''}`;
+
+            document.getElementById('tab-btn-soc').className = `nav-pill ${tab === 'soc' ? 'active' : ''}`;
+            document.getElementById('tab-btn-manual').className = `nav-pill ${tab === 'manual' ? 'active' : ''}`;
+            document.getElementById('tab-btn-curated').className = `nav-pill ${tab === 'curated' ? 'active' : ''}`;
+
+            if (tab === 'soc') {
+                resizeCanvas();
+            }
+        }
+
+        function toggleTelemetryDrawer() {
+            const drawer = document.getElementById('telemetry-drawer-content');
+            const icon = document.getElementById('telemetry-drawer-icon');
+            if (drawer.classList.contains('open')) {
+                drawer.classList.remove('open');
+                icon.innerText = '▼ Expand';
+            } else {
+                drawer.classList.add('open');
+                icon.innerText = '▲ Collapse';
+            }
+        }
+
+        // -------------------------------------------------------------
+        // PART B: NETWORK TOPOLOGY CANVAS VISUALIZER ENGINE
+        // -------------------------------------------------------------
+        let canvas, ctx;
+        let animFrameId = null;
+        let packets = [];
+        let radarAngle = 0;
+        let pulsePhase = 0;
+        let canvasWidth = 800, canvasHeight = 380;
+
+        // Node coordinate percentages
+        const NODE_SOURCE = { xRatio: 0.12, yRatio: 0.50, label: 'SOURCE ORIGIN', sub: 'Inbound Flow' };
+        const NODE_NIDS   = { xRatio: 0.48, yRatio: 0.50, label: 'NIDS HUB', sub: 'Inspection Point' };
+        const NODE_GATE_A = { xRatio: 0.84, yRatio: 0.28, label: 'MODEL A GATE', sub: 'Baseline Clean' };
+        const NODE_GATE_B = { xRatio: 0.84, yRatio: 0.72, label: 'MODEL B GATE', sub: 'AdvRoNIDS Robust' };
+
+        // Visual state flags for canvas
+        let sourceStatus = 'scanning'; // 'scanning', 'clean', 'attack'
+        let inspectionPulse = 0;
+        let gateAStatus = 'neutral'; // 'neutral', 'defended', 'evaded'
+        let gateBStatus = 'neutral'; // 'neutral', 'defended', 'evaded'
+        let sparkBursts = [];
+
+        function initTopologyCanvas() {
+            canvas = document.getElementById('topologyCanvas');
+            if (!canvas) return;
+            ctx = canvas.getContext('2d');
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            startCanvasLoop();
+        }
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            canvasWidth = rect.width || 800;
+            canvasHeight = rect.height || 380;
+            canvas.width = canvasWidth * dpr;
+            canvas.height = canvasHeight * dpr;
+            ctx.scale(dpr, dpr);
+        }
+
+        function startCanvasLoop() {
+            function loop() {
+                renderTopologyFrame();
+                animFrameId = requestAnimationFrame(loop);
+            }
+            loop();
+        }
+
+        function spawnTrafficPacketWave(isAttack, isConstrained, eps, numSteps) {
+            // Clear prior flying particles
+            packets = [];
+            inspectionPulse = 0;
+            gateAStatus = 'neutral';
+            gateBStatus = 'neutral';
+            sourceStatus = 'scanning';
+
+            playSound('intercept');
+
+            // Generate particles (one main cluster + jitter waves)
+            const count = isAttack ? Math.min(18, 6 + numSteps * 2) : 10;
+            for (let i = 0; i < count; i++) {
+                const isFrozen = (i % 3 === 0); // 1 in 3 represents structural invariant
+                const delay = i * 0.08;
+                packets.push({
+                    progress: -delay,
+                    speed: 0.012 + Math.random() * 0.004,
+                    isAttack: isAttack,
+                    isFrozen: isFrozen,
+                    eps: eps || 0.1,
+                    jitterAmplitude: isFrozen ? 0 : (isAttack ? (eps * 35 + 3) : 0),
+                    phase: Math.random() * Math.PI * 2,
+                    targetGate: Math.random() > 0.5 ? 'A' : 'B'
+                });
+            }
+        }
+
+        function renderTopologyFrame() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+            radarAngle += 0.035;
+            pulsePhase += 0.05;
+
+            const srcX = canvasWidth * NODE_SOURCE.xRatio;
+            const srcY = canvasHeight * NODE_SOURCE.yRatio;
+            const nidsX = canvasWidth * NODE_NIDS.xRatio;
+            const nidsY = canvasHeight * NODE_NIDS.yRatio;
+            const gateAX = canvasWidth * NODE_GATE_A.xRatio;
+            const gateAY = canvasHeight * NODE_GATE_A.yRatio;
+            const gateBX = canvasWidth * NODE_GATE_B.xRatio;
+            const gateBY = canvasHeight * NODE_GATE_B.yRatio;
+
+            // 1. Draw Network Path Laser Lines
+            drawLaserPath(srcX, srcY, nidsX, nidsY, '#1e3a8a', '#3b82f6');
+            drawLaserPath(nidsX, nidsY, gateAX, gateAY, '#1e293b', gateAStatus === 'evaded' ? '#ef4444' : '#3b82f6');
+            drawLaserPath(nidsX, nidsY, gateBX, gateBY, '#1e293b', gateBStatus === 'defended' ? '#10b981' : '#06b6d4');
+
+            // 2. Animate and Render Packets
+            for (let i = packets.length - 1; i >= 0; i--) {
+                const p = packets[i];
+                p.progress += p.speed;
+
+                if (p.progress < 0) continue; // Waiting on stagger delay
+
+                let px = 0, py = 0;
+                let packetColor = p.isAttack ? (p.isFrozen ? '#38bdf8' : '#f59e0b') : '#60a5fa';
+
+                if (p.progress <= 0.5) {
+                    // Leg 1: Source to NIDS Inspection Hub
+                    const t = p.progress / 0.5;
+                    px = srcX + (nidsX - srcX) * t;
+                    const jitter = Math.sin(t * 12 + p.phase) * p.jitterAmplitude * (1 - Math.cos(t * Math.PI));
+                    py = srcY + jitter;
+
+                    if (t >= 0.95 && inspectionPulse < 1.0) {
+                        inspectionPulse = 1.0;
+                    }
+                } else if (p.progress <= 1.0) {
+                    // Leg 2: NIDS Inspection Hub to Target Gate
+                    const t = (p.progress - 0.5) / 0.5;
+                    const destX = p.targetGate === 'A' ? gateAX : gateBX;
+                    const destY = p.targetGate === 'A' ? gateAY : gateBY;
+
+                    px = nidsX + (destX - nidsX) * t;
+                    const curveY = nidsY + (destY - nidsY) * t;
+                    const jitter = Math.sin(t * 15 + p.phase) * p.jitterAmplitude * (1 - t);
+                    py = curveY + jitter;
+                } else if (p.progress > 1.0 && p.progress < 1.3) {
+                    // Leg 3: Passing through or breaking gate
+                    const t = (p.progress - 1.0) / 0.3;
+                    const destX = p.targetGate === 'A' ? gateAX : gateBX;
+                    const destY = p.targetGate === 'A' ? gateAY : gateBY;
+                    px = destX + t * 45;
+                    py = destY + (p.targetGate === 'A' && gateAStatus === 'evaded' ? (Math.random() - 0.5) * 15 : 0);
+                }
+
+                // Draw Packet Particle Glow
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(px, py, p.isFrozen ? 3.5 : 4.5, 0, Math.PI * 2);
+                ctx.fillStyle = packetColor;
+                ctx.shadowColor = packetColor;
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // 3. Draw Spark Bursts (Gate Cracks / Flashes)
+            renderSparks();
+
+            // 4. Render Nodes
+            renderSourceNode(srcX, srcY);
+            renderInspectionHub(nidsX, nidsY);
+            renderGateNode(gateAX, gateAY, 'Model A (Baseline)', gateAStatus);
+            renderGateNode(gateBX, gateBY, 'Model B (Robust)', gateBStatus);
+        }
+
+        function drawLaserPath(x1, y1, x2, y2, bgCol, glowCol) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = bgCol;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = glowCol;
+            ctx.shadowColor = glowCol;
+            ctx.shadowBlur = 8;
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function renderSourceNode(x, y) {
+            ctx.save();
+            const pulse = (Math.sin(pulsePhase) + 1) * 0.5;
+            let color = '#3b82f6';
+            if (sourceStatus === 'clean') color = '#10b981';
+            if (sourceStatus === 'attack') color = '#ef4444';
+
+            // Outer Pulse Ring
+            ctx.beginPath();
+            ctx.arc(x, y, 22 + pulse * 6, 0, Math.PI * 2);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5;
+            ctx.globalAlpha = 0.4 + pulse * 0.3;
+            ctx.stroke();
+
+            // Core Node Circle
+            ctx.beginPath();
+            ctx.arc(x, y, 18, 0, Math.PI * 2);
+            ctx.fillStyle = '#0f172a';
+            ctx.fill();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2.5;
+            ctx.globalAlpha = 1.0;
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 12;
+            ctx.stroke();
+
+            // Icon / Label
+            ctx.fillStyle = '#fff';
+            ctx.font = '700 10px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText(sourceStatus === 'attack' ? '⚠️' : '💻', x, y + 3);
+
+            ctx.font = '600 10px Outfit';
+            ctx.fillStyle = '#cbd5e1';
+            ctx.fillText('SOURCE', x, y + 32);
+            ctx.font = '500 8px Fira Code';
+            ctx.fillStyle = 'var(--text-dim)';
+            ctx.fillText('Traffic Origin', x, y + 43);
+            ctx.restore();
+        }
+
+        function renderInspectionHub(x, y) {
+            ctx.save();
+            // Radar Sweep & Glowing Core
+            ctx.beginPath();
+            ctx.arc(x, y, 26, 0, Math.PI * 2);
+            ctx.fillStyle = '#0d1527';
+            ctx.fill();
+            ctx.strokeStyle = '#06b6d4';
+            ctx.lineWidth = 2;
+            ctx.shadowColor = '#06b6d4';
+            ctx.shadowBlur = inspectionPulse > 0 ? 20 : 8;
+            ctx.stroke();
+
+            // Radar Scan Line
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + Math.cos(radarAngle) * 24, y + Math.sin(radarAngle) * 24);
+            ctx.strokeStyle = 'rgba(6, 182, 212, 0.8)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            if (inspectionPulse > 0) {
+                ctx.beginPath();
+                ctx.arc(x, y, 26 + (1 - inspectionPulse) * 15, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(6, 182, 212, ${inspectionPulse})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                inspectionPulse -= 0.03;
+            }
+
+            ctx.fillStyle = '#fff';
+            ctx.font = '700 11px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('📡', x, y + 4);
+
+            ctx.font = '700 10px Outfit';
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillText('NIDS HUB', x, y + 38);
+            ctx.font = '500 8px Fira Code';
+            ctx.fillStyle = 'var(--text-dim)';
+            ctx.fillText('Feature Extraction', x, y + 49);
+            ctx.restore();
+        }
+
+        function renderGateNode(x, y, title, status) {
+            ctx.save();
+            let gateColor = '#3b82f6';
+            let statusText = 'SCANNING';
+            let icon = '⚡';
+
+            if (status === 'defended') {
+                gateColor = '#10b981';
+                statusText = 'DEFENDED';
+                icon = '🛡️';
+            } else if (status === 'evaded') {
+                gateColor = '#ef4444';
+                statusText = 'EVADED!';
+                icon = '🚨';
+            }
+
+            // Energy Gate Vertical Bar
+            ctx.beginPath();
+            ctx.roundRect(x - 6, y - 28, 12, 56, 4);
+            ctx.fillStyle = status === 'evaded' ? 'rgba(239, 68, 68, 0.25)' : 'rgba(16, 185, 129, 0.15)';
+            ctx.fill();
+            ctx.strokeStyle = gateColor;
+            ctx.lineWidth = 2.5;
+            ctx.shadowColor = gateColor;
+            ctx.shadowBlur = status !== 'neutral' ? 18 : 6;
+            ctx.stroke();
+
+            // Center Gate Icon Bubble
+            ctx.beginPath();
+            ctx.arc(x, y, 14, 0, Math.PI * 2);
+            ctx.fillStyle = '#0f172a';
+            ctx.fill();
+            ctx.strokeStyle = gateColor;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.font = '10px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText(icon, x, y + 3);
+
+            // Gate Metadata Labels
+            ctx.textAlign = 'left';
+            ctx.font = '700 10px Outfit';
+            ctx.fillStyle = '#fff';
+            ctx.fillText(title, x + 20, y - 6);
+
+            ctx.font = '700 9px Fira Code';
+            ctx.fillStyle = gateColor;
+            ctx.fillText(statusText, x + 20, y + 8);
+            ctx.restore();
+        }
+
+        function triggerGateSparks(gateKey) {
+            const gx = canvasWidth * (gateKey === 'A' ? NODE_GATE_A.xRatio : NODE_GATE_B.xRatio);
+            const gy = canvasHeight * (gateKey === 'A' ? NODE_GATE_A.yRatio : NODE_GATE_B.yRatio);
+            for (let i = 0; i < 16; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const spd = 2 + Math.random() * 4;
+                sparkBursts.push({
+                    x: gx,
+                    y: gy,
+                    vx: Math.cos(angle) * spd,
+                    vy: Math.sin(angle) * spd,
+                    life: 1.0,
+                    color: gateKey === 'A' ? '#ef4444' : '#10b981'
+                });
+            }
+        }
+
+        function renderSparks() {
+            for (let i = sparkBursts.length - 1; i >= 0; i--) {
+                const s = sparkBursts[i];
+                s.x += s.vx;
+                s.y += s.vy;
+                s.life -= 0.04;
+                if (s.life <= 0) {
+                    sparkBursts.splice(i, 1);
+                    continue;
+                }
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = s.color;
+                ctx.globalAlpha = s.life;
+                ctx.shadowColor = s.color;
+                ctx.shadowBlur = 6;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // -------------------------------------------------------------
+        // RADIAL PROGRESS UPDATE HELPER
+        // -------------------------------------------------------------
+        function updateRadialRing(ringId, textId, confPercent, colorClass) {
+            const ring = document.getElementById(ringId);
+            const text = document.getElementById(textId);
+            if (!ring || !text) return;
+
+            const circumference = 2 * Math.PI * 36; // 226.19
+            const offset = circumference - (confPercent / 100) * circumference;
+            ring.style.strokeDashoffset = offset;
+            ring.className = `radial-progress ${colorClass}`;
+            text.innerText = `${confPercent.toFixed(1)}%`;
+        }
+
+        // -------------------------------------------------------------
+        // PART A & C: AUTONOMOUS LIVE THREAT FEED & TERMINAL LOGS
+        // -------------------------------------------------------------
+        function startAutonomousFeed() {
+            isAutonomousRunning = true;
+            document.getElementById('feed-status-badge').className = 'hud-badge status-running';
+            document.getElementById('feed-status-text').innerText = 'Autonomous Interception Active';
+            document.getElementById('feed-pause-icon').innerText = '⏸';
+            document.getElementById('feed-pause-label').innerText = 'Pause Feed';
+            scheduleNextTick(300);
+        }
+
+        function toggleAutonomousFeed() {
+            if (isAutonomousRunning) {
+                isAutonomousRunning = false;
+                if (autonomousTimer) clearTimeout(autonomousTimer);
+                document.getElementById('feed-status-badge').className = 'hud-badge status-paused';
+                document.getElementById('feed-status-text').innerText = 'Feed Paused (Manual Hold)';
+                document.getElementById('feed-pause-icon').innerText = '▶';
+                document.getElementById('feed-pause-label').innerText = 'Resume Feed';
+            } else {
+                startAutonomousFeed();
+            }
+        }
+
+        function scheduleNextTick(delayMs) {
+            if (autonomousTimer) clearTimeout(autonomousTimer);
+            if (!isAutonomousRunning) return;
+            autonomousTimer = setTimeout(runAutonomousTick, delayMs);
+        }
+
+        async function triggerManualTick() {
+            if (autonomousTimer) clearTimeout(autonomousTimer);
+            await runAutonomousTick();
+        }
+
+        async function runAutonomousTick() {
+            try {
+                const res = await fetch('/autonomous-tick', { method: 'POST' });
+                if (!res.ok) throw new Error('Autonomous tick failed');
+                const data = await res.json();
+                currentAutonomousData = data;
+
+                // Process telemetry & trigger animation pipeline
+                await processAutonomousTickResult(data);
+
+            } catch (e) {
+                console.error('Autonomous feed tick error:', e);
+                appendTerminalLog(`> [WARN] Autonomous tick error: ${e.message}`, 'log-threat');
+            } finally {
+                if (isAutonomousRunning) {
+                    scheduleNextTick(5000); // Poll continuous feed every ~5s
+                }
+            }
+        }
+
+        async function processAutonomousTickResult(data) {
+            const gt = data.ground_truth_label;
+            const gtInfo = getAttackInfo(gt);
+            const isAdv = data.is_adversarial;
+            const eps = data.epsilon;
+            const numSteps = data.num_steps || 7;
+
+            // Update Top HUD
+            document.getElementById('hud-flow-id').innerText = data.flow_id.split('_').slice(0, 3).join('_');
+            document.getElementById('hud-threat-name').innerText = `${gtInfo.display_name} (${isAdv ? `Constrained PGD eps=${eps.toFixed(2)}` : 'Clean Baseline'})`;
+
+            // Scoreboard Ticker Updates
+            totalFlowsCount++;
+            document.getElementById('ticker-flows-count').innerText = totalFlowsCount;
+
+            const finalA = data.model_a_trace[data.model_a_trace.length - 1];
+            const finalB = data.model_b_trace[data.model_b_trace.length - 1];
+            const isEvadedA = finalA.prediction !== gt;
+            const isDefendedB = finalB.prediction === gt;
+
+            if (isEvadedA) totalAMissed++;
+            if (isDefendedB && isAdv) totalBCaught++;
+
+            document.getElementById('ticker-b-caught').innerText = totalBCaught;
+            document.getElementById('ticker-a-missed').innerText = totalAMissed;
+            const defenseRate = totalFlowsCount > 0 ? (((totalFlowsCount - totalAMissed) / totalFlowsCount) * 100).toFixed(1) : 100.0;
+            document.getElementById('ticker-defense-rate').innerText = `${defenseRate}%`;
+
+            // Trigger Topology Animation Wave
+            spawnTrafficPacketWave(isAdv, data.constrained, eps, numSteps);
+
+            // Halfway through animation (~1.2s), reveal source identity and gate evaluations
+            setTimeout(() => {
+                sourceStatus = (gt === 'Benign') ? 'clean' : 'attack';
+                gateAStatus = isEvadedA ? 'evaded' : 'defended';
+                gateBStatus = isDefendedB ? 'defended' : 'evaded';
+
+                if (isEvadedA) {
+                    triggerGateSparks('A');
+                    playSound('evaded');
+                } else {
+                    playSound('defended');
+                }
+                if (isDefendedB) {
+                    triggerGateSparks('B');
+                }
+
+                // Update Scanners
+                renderAutonomousScanners(data, finalA, finalB, gt, gtInfo, isEvadedA, isDefendedB);
+
+                // Stream Terminal Logs
+                if (data.log_entries && data.log_entries.length > 0) {
+                    data.log_entries.forEach((line, idx) => {
+                        setTimeout(() => {
+                            let type = 'log-clean';
+                            if (line.includes('COMPROMISED') || line.includes('Evaded')) type = 'log-evasion';
+                            else if (line.includes('NEUTRALIZED') || line.includes('Threat detected')) type = 'log-defended';
+                            else if (line.includes('detected:') || line.includes('suspected')) type = 'log-threat';
+                            appendTerminalLog(`> ${line}`, type);
+                        }, idx * 180);
+                    });
+                }
+
+                // Update Telemetry Drawer Table
+                renderAutonomousTelemetryTable(data, finalA, finalB);
+
+            }, 1200);
+        }
+
+        function renderAutonomousScanners(data, finalA, finalB, gt, gtInfo, isEvadedA, isDefendedB) {
+            const cardA = document.getElementById('scanner-card-a');
+            const cardB = document.getElementById('scanner-card-b');
+            const badgeA = document.getElementById('scanner-badge-a');
+            const badgeB = document.getElementById('scanner-badge-b');
+
+            // Model A UI
+            const predInfoA = getAttackInfo(finalA.prediction);
+            const confA = finalA.confidence * 100;
+            document.getElementById('scanner-verdict-a').innerHTML = renderAttackBadgeHtml(finalA.prediction);
+
+            if (isEvadedA) {
+                cardA.className = 'scanner-card evaded-glow';
+                badgeA.className = 'badge badge-evaded';
+                badgeA.innerText = 'EVADED (BREACH)';
+                document.getElementById('scanner-sub-a').innerHTML = `⚠️ Fooled by perturbation → falsely flagged as <strong>${predInfoA.display_name}</strong>`;
+                updateRadialRing('radial-ring-a', 'radial-val-a', confA, 'progress-red');
+            } else {
+                cardA.className = 'scanner-card';
+                badgeA.className = 'badge badge-defended';
+                badgeA.innerText = 'ACCURATE';
+                document.getElementById('scanner-sub-a').innerHTML = `Target flow verified: <strong>${gtInfo.display_name}</strong>`;
+                updateRadialRing('radial-ring-a', 'radial-val-a', confA, 'progress-blue');
+            }
+
+            // Model B UI
+            const predInfoB = getAttackInfo(finalB.prediction);
+            const confB = finalB.confidence * 100;
+            document.getElementById('scanner-verdict-b').innerHTML = renderAttackBadgeHtml(finalB.prediction);
+
+            if (isDefendedB) {
+                cardB.className = 'scanner-card defended-glow';
+                badgeB.className = 'badge badge-defended';
+                badgeB.innerText = 'DEFENDED (ROBUST)';
+                document.getElementById('scanner-sub-b').innerHTML = `🛡️ Anchored on protocol invariants → caught <strong>${gtInfo.display_name}</strong>`;
+                updateRadialRing('radial-ring-b', 'radial-val-b', confB, 'progress-green');
+            } else {
+                cardB.className = 'scanner-card evaded-glow';
+                badgeB.className = 'badge badge-evaded';
+                badgeB.innerText = 'EVADED';
+                document.getElementById('scanner-sub-b').innerHTML = `⚠️ Evaded to <strong>${predInfoB.display_name}</strong>`;
+                updateRadialRing('radial-ring-b', 'radial-val-b', confB, 'progress-red');
+            }
+        }
+
+        function renderAutonomousTelemetryTable(data, finalA, finalB) {
+            const l2A = finalA.l2_norm_a !== undefined ? finalA.l2_norm_a.toFixed(4) : (finalA.l2_norm !== undefined ? finalA.l2_norm.toFixed(4) : '0.0000');
+            const l2B = finalB.l2_norm_b !== undefined ? finalB.l2_norm_b.toFixed(4) : (finalB.l2_norm !== undefined ? finalB.l2_norm.toFixed(4) : '0.0000');
+            document.getElementById('soc-l2-a').innerText = `||Δ_A||₂ = ${l2A}`;
+            document.getElementById('soc-l2-b').innerText = `||Δ_B||₂ = ${l2B}`;
+
+            const tbody = document.getElementById('soc-telemetry-tbody');
+            tbody.innerHTML = '';
+
+            const topFeats = finalA.top_features || [];
+            if (topFeats.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:12px;">Clean baseline flow — zero feature shifts applied</td></tr>';
+                return;
+            }
+
+            topFeats.forEach(item => {
+                const tr = document.createElement('tr');
+                const isFrz = item.is_frozen;
+                const deltaA = item.delta_a !== undefined ? item.delta_a : (item.delta !== undefined ? item.delta : 0.0);
+                const deltaB = item.delta_b !== undefined ? item.delta_b : 0.0;
+
+                tr.innerHTML = `
+                    <td>${renderFeatureCellHtml(item.feature_name)}</td>
+                    <td>
+                        <span class="${isFrz ? 'frozen-tag' : 'perturb-tag'}">
+                            ${isFrz ? 'Structural Protocol Rule (Frozen)' : 'Manipulable Metric'}
+                        </span>
+                    </td>
+                    <td style="text-align: right;" class="delta-val ${deltaA > 0.0001 ? 'delta-pos' : (deltaA < -0.0001 ? 'delta-neg' : '')}">
+                        ${deltaA > 0.0001 ? '+' : ''}${deltaA.toFixed(4)}
+                    </td>
+                    <td style="text-align: right;" class="delta-val ${deltaB > 0.0001 ? 'delta-pos' : (deltaB < -0.0001 ? 'delta-neg' : '')}">
+                        ${deltaB > 0.0001 ? '+' : ''}${deltaB.toFixed(4)}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function appendTerminalLog(text, typeClass) {
+            const feed = document.getElementById('soc-terminal-feed');
+            if (!feed) return;
+            const div = document.createElement('div');
+            div.className = `log-entry ${typeClass || ''}`;
+            div.innerText = text;
+            feed.appendChild(div);
+
+            // Buffer prune: keep last 40 lines
+            while (feed.children.length > 40) {
+                feed.removeChild(feed.children[0]);
+            }
+            feed.scrollTop = feed.scrollHeight;
+        }
+
+        function clearTerminalLogs() {
+            const feed = document.getElementById('soc-terminal-feed');
+            if (feed) feed.innerHTML = '<div class="log-entry log-clean">> [SYSTEM] Terminal log cleared by operator.</div>';
+        }
+
+        async function generateSocTriageNote() {
+            if (!currentAutonomousData) {
+                alert('Awaiting first flow analysis');
+                return;
+            }
+            const btn = document.getElementById('soc-triage-btn');
+            const textEl = document.getElementById('soc-triage-text');
+            btn.innerHTML = '<span class="spinner"></span> Synthesizing...';
+            btn.disabled = true;
+
+            const finalA = currentAutonomousData.model_a_trace[currentAutonomousData.model_a_trace.length - 1];
+            const finalB = currentAutonomousData.model_b_trace[currentAutonomousData.model_b_trace.length - 1];
+
+            const triagePayload = {
+                flow_id: currentAutonomousData.flow_id,
+                ground_truth_label: currentAutonomousData.ground_truth_label,
+                is_adversarial: currentAutonomousData.is_adversarial,
+                category_tag: `Live War Room: ${currentAutonomousData.ground_truth_label}`,
+                model_a_prediction: { label: finalA.prediction, confidence: finalA.confidence },
+                model_b_prediction: { label: finalB.prediction, confidence: finalB.confidence },
+                perturbation_delta: currentAutonomousData.final_delta_dict
+            };
+
+            try {
+                const res = await fetch('/triage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(triagePayload)
+                });
+                const data = await res.json();
+                textEl.innerText = data.incident_note;
+            } catch (e) {
+                textEl.innerText = 'Incident synthesis error: ' + e;
+            } finally {
+                btn.innerHTML = 'Synthesize Note';
+                btn.disabled = false;
+            }
+        }
+
+        // -------------------------------------------------------------
+        // TAB 2: MANUAL INVESTIGATE ATTACK SIMULATOR
+        // -------------------------------------------------------------
+        async function loadCategories() {
+            try {
+                const res = await fetch('/attack-categories');
+                const data = await res.json();
+                const select = document.getElementById('sim-category-select');
+                if (!select) return;
+                select.innerHTML = '';
+                data.categories.forEach(cat => {
+                    const rawName = cat.name;
+                    const info = getAttackInfo(rawName);
+                    const opt = document.createElement('option');
+                    opt.value = rawName;
+                    opt.innerText = `${info.display_name} (${rawName}${cat.is_rare ? ' - rare' : ''})`;
+                    if (rawName === 'SSH-Patator') opt.selected = true;
+                    select.appendChild(opt);
+                });
+            } catch (e) {
+                console.warn('Failed to load categories:', e);
+            }
+        }
+
+        function setConstraintMode(constrained) {
+            isConstrained = constrained;
+            document.getElementById('toggle-constrained').className = `toggle-btn ${constrained ? 'active' : ''}`;
+            document.getElementById('toggle-unconstrained').className = `toggle-btn ${!constrained ? 'active' : ''}`;
+        }
+
+        function onEpsChange() {
+            const val = parseFloat(document.getElementById('sim-eps-slider').value).toFixed(2);
+            document.getElementById('sim-eps-val').innerText = val;
+        }
+
+        function onStepsChange() {
+            const val = document.getElementById('sim-steps-slider').value;
+            document.getElementById('sim-steps-val').innerText = val;
+        }
+
+        async function launchManualSimulation() {
+            const btn = document.getElementById('launch-sim-btn');
+            btn.innerHTML = '<span class="spinner"></span> Computing...';
+            btn.disabled = true;
+            pauseManualSim();
+
+            const category = document.getElementById('sim-category-select').value;
+            const epsilon = parseFloat(document.getElementById('sim-eps-slider').value);
+            const num_steps = parseInt(document.getElementById('sim-steps-slider').value);
+
+            try {
+                const res = await fetch('/simulate-attack', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        category: category,
+                        constrained: isConstrained,
+                        epsilon: epsilon,
+                        num_steps: num_steps
+                    })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    alert('Simulation error: ' + (err.detail || 'Failed'));
+                    return;
+                }
+
+                currentManualData = await res.json();
+                setupManualTimeline();
+                renderManualStep(0);
+                playManualSim();
+            } catch (e) {
+                alert('Simulation failed: ' + e);
+            } finally {
+                btn.innerHTML = '<span>🚀 Launch Step Attack</span>';
+                btn.disabled = false;
+            }
+        }
+
+        function setupManualTimeline() {
+            const container = document.getElementById('timeline-steps');
+            container.innerHTML = '';
+            if (!currentManualData) return;
+
+            const totalSteps = currentManualData.num_steps;
+            for (let s = 0; s <= totalSteps; s++) {
+                const node = document.createElement('div');
+                node.className = `step-node ${s === 0 ? 'active' : ''}`;
+                node.id = `manual-step-node-${s}`;
+                node.innerText = s;
+                node.onclick = () => {
+                    pauseManualSim();
+                    renderManualStep(s);
+                };
+                if (currentManualData.model_a_flip_step !== null && s >= currentManualData.model_a_flip_step) {
+                    node.classList.add('flipped-node');
+                }
+                container.appendChild(node);
+            }
+        }
+
+        function playManualSim() {
+            if (manualInterval) clearInterval(manualInterval);
+            isManualPlaying = true;
+            document.getElementById('play-pause-btn').innerText = '⏸ Pause';
+
+            manualInterval = setInterval(() => {
+                if (!currentManualData) return;
+                if (manualStep < currentManualData.num_steps) {
+                    renderManualStep(manualStep + 1);
+                } else {
+                    pauseManualSim();
+                }
+            }, 750);
+        }
+
+        function pauseManualSim() {
+            isManualPlaying = false;
+            if (manualInterval) clearInterval(manualInterval);
+            document.getElementById('play-pause-btn').innerText = '▶ Play';
+        }
+
+        function togglePlayPause() {
+            if (isManualPlaying) {
+                pauseManualSim();
+            } else {
+                if (currentManualData && manualStep >= currentManualData.num_steps) {
+                    renderManualStep(0);
+                }
+                playManualSim();
+            }
+        }
+
+        function stepForward() {
+            pauseManualSim();
+            if (currentManualData && manualStep < currentManualData.num_steps) {
+                renderManualStep(manualStep + 1);
+            }
+        }
+
+        function stepBackward() {
+            pauseManualSim();
+            if (currentManualData && manualStep > 0) {
+                renderManualStep(manualStep - 1);
+            }
+        }
+
+        function renderManualStep(step) {
+            manualStep = step;
+            if (!currentManualData) return;
+
+            const totalSteps = currentManualData.num_steps;
+            const gt = currentManualData.ground_truth_label;
+            const gtInfo = getAttackInfo(gt);
+
+            const traceA = currentManualData.model_a_trace[step];
+            const traceB = currentManualData.model_b_trace[step];
+
+            document.getElementById('current-step-pill').innerText = step === 0 ? `Step 0 of ${totalSteps} (Clean Baseline)` : `Step ${step} of ${totalSteps} (PGD Ascent Active)`;
+
+            for (let s = 0; s <= totalSteps; s++) {
+                const node = document.getElementById(`manual-step-node-${s}`);
+                if (node) {
+                    node.className = `step-node ${s === step ? 'active' : ''} ${currentManualData.model_a_flip_step !== null && s >= currentManualData.model_a_flip_step ? 'flipped-node' : ''}`;
+                }
+            }
+
+            // Model A
+            const isEvadedA = traceA.prediction !== gt;
+            const confA = traceA.confidence * 100;
+            document.getElementById('manual-verdict-a').innerHTML = renderAttackBadgeHtml(traceA.prediction);
+            const badgeA = document.getElementById('manual-badge-a');
+            if (isEvadedA) {
+                badgeA.className = 'badge badge-evaded';
+                badgeA.innerText = `EVADED AT STEP ${currentManualData.model_a_flip_step || step}`;
+                updateRadialRing('manual-radial-a', 'manual-conf-a', confA, 'progress-red');
+            } else {
+                badgeA.className = 'badge badge-defended';
+                badgeA.innerText = 'ACCURATE';
+                updateRadialRing('manual-radial-a', 'manual-conf-a', confA, 'progress-blue');
+            }
+
+            // Model B
+            const isDefendedB = traceB.prediction === gt;
+            const confB = traceB.confidence * 100;
+            document.getElementById('manual-verdict-b').innerHTML = renderAttackBadgeHtml(traceB.prediction);
+            const badgeB = document.getElementById('manual-badge-b');
+            if (isDefendedB) {
+                badgeB.className = 'badge badge-defended';
+                badgeB.innerText = 'DEFENDED (ROBUST)';
+                updateRadialRing('manual-radial-b', 'manual-conf-b', confB, 'progress-green');
+            } else {
+                badgeB.className = 'badge badge-evaded';
+                badgeB.innerText = 'EVADED';
+                updateRadialRing('manual-radial-b', 'manual-conf-b', confB, 'progress-red');
+            }
+
+            // Manual Step Telemetry Table
+            const tbody = document.getElementById('manual-telemetry-tbody');
+            tbody.innerHTML = '';
+            (traceA.top_features || []).forEach(item => {
+                const tr = document.createElement('tr');
+                const isFrz = item.is_frozen;
+                const deltaA = item.delta_a !== undefined ? item.delta_a : (item.delta !== undefined ? item.delta : 0.0);
+                const deltaB = item.delta_b !== undefined ? item.delta_b : 0.0;
+
+                tr.innerHTML = `
+                    <td>${renderFeatureCellHtml(item.feature_name)}</td>
+                    <td><span class="${isFrz ? 'frozen-tag' : 'perturb-tag'}">${isFrz ? 'Structural (Frozen)' : 'Manipulable'}</span></td>
+                    <td style="text-align: right;" class="delta-val ${deltaA > 0.0001 ? 'delta-pos' : (deltaA < -0.0001 ? 'delta-neg' : '')}">${deltaA > 0.0001 ? '+' : ''}${deltaA.toFixed(4)}</td>
+                    <td style="text-align: right;" class="delta-val ${deltaB > 0.0001 ? 'delta-pos' : (deltaB < -0.0001 ? 'delta-neg' : '')}">${deltaB > 0.0001 ? '+' : ''}${deltaB.toFixed(4)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // -------------------------------------------------------------
+        // TAB 3: BENCHMARK DEMO FLOWS
+        // -------------------------------------------------------------
+        async function loadDemoFlows() {
+            try {
+                const res = await fetch('/demo-flows');
+                const data = await res.json();
+                demoFlows = data.flows || [];
+                renderDemoFlowList();
+                if (demoFlows.length > 0) {
+                    selectDemoFlow(0);
+                }
+            } catch (e) {
+                console.warn('Failed to load demo flows:', e);
+            }
+        }
+
+        function renderDemoFlowList() {
+            const listEl = document.getElementById('flow-list');
+            listEl.innerHTML = '';
+            demoFlows.forEach((flow, idx) => {
+                const card = document.createElement('div');
+                card.className = `flow-card ${idx === currentDemoIndex ? 'active' : ''}`;
+                card.onclick = () => selectDemoFlow(idx);
+
+                let badgeClass = 'badge-clean';
+                let badgeText = 'Clean Traffic';
+                if (flow.is_adversarial) {
+                    if (flow.model_a_prediction.label !== flow.ground_truth_label && flow.model_b_prediction.label === flow.ground_truth_label) {
+                        badgeClass = 'badge-evaded';
+                        badgeText = 'Model A Evaded';
+                    } else {
+                        badgeClass = 'badge-defended';
+                        badgeText = 'Caught Both';
+                    }
+                }
+
+                const infoGT = getAttackInfo(flow.ground_truth_label);
+                card.innerHTML = `
+                    <div class="flow-card-top">
+                        <span class="flow-card-id">${flow.flow_id.split('_').slice(0, 2).join('_')}</span>
+                        <span class="badge ${badgeClass}">${badgeText}</span>
+                    </div>
+                    <div class="flow-card-class">${infoGT.display_name}</div>
+                    <div style="font-size: 0.72rem; color: #94a3b8;">${flow.ground_truth_label} • ${flow.category_tag}</div>
+                `;
+                listEl.appendChild(card);
+            });
+        }
+
+        function selectDemoFlow(idx) {
+            currentDemoIndex = idx;
+            renderDemoFlowList();
+            const flow = demoFlows[idx];
+            displayDemoFlow(flow);
+            triggerDemoTriage();
+        }
+
+        function displayDemoFlow(flow) {
+            const infoGT = getAttackInfo(flow.ground_truth_label);
+            document.getElementById('demo-flow-title').innerHTML = `${infoGT.display_name} <span class="raw-tech-badge">${flow.ground_truth_label}</span>`;
+            document.getElementById('demo-flow-subtitle').innerHTML = `Ground Truth: <strong>${infoGT.display_name}</strong> | Condition: <strong>${flow.is_adversarial ? 'Constrained Adversarial Perturbation' : 'Clean Operational Baseline'}</strong>`;
+
+            // Model A
+            const predA = flow.model_a_prediction;
+            document.getElementById('demo-verdict-a').innerHTML = renderAttackBadgeHtml(predA.label);
+            const confA = predA.confidence * 100;
+            const isEvadedA = predA.label !== flow.ground_truth_label;
+            document.getElementById('demo-badge-a').className = `badge ${isEvadedA ? 'badge-evaded' : 'badge-defended'}`;
+            document.getElementById('demo-badge-a').innerText = isEvadedA ? 'EVADED' : 'ACCURATE';
+            updateRadialRing('demo-radial-a', 'demo-conf-a', confA, isEvadedA ? 'progress-red' : 'progress-blue');
+
+            // Model B
+            const predB = flow.model_b_prediction;
+            document.getElementById('demo-verdict-b').innerHTML = renderAttackBadgeHtml(predB.label);
+            const confB = predB.confidence * 100;
+            const isDefendedB = predB.label === flow.ground_truth_label;
+            document.getElementById('demo-badge-b').className = `badge ${isDefendedB ? 'badge-defended' : 'badge-evaded'}`;
+            document.getElementById('demo-badge-b').innerText = isDefendedB ? 'DEFENDED' : 'EVADED';
+            updateRadialRing('demo-radial-b', 'demo-conf-b', confB, isDefendedB ? 'progress-green' : 'progress-red');
+        }
+
+        async function triggerDemoTriage() {
+            const flow = demoFlows[currentDemoIndex];
+            if (!flow) return;
+            const noteEl = document.getElementById('demo-note-text');
+            const btnEl = document.getElementById('demo-regen-btn');
+            btnEl.innerHTML = '<span class="spinner"></span> Generating...';
+            btnEl.disabled = true;
+
+            try {
+                const res = await fetch('/triage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(flow)
+                });
+                const result = await res.json();
+                noteEl.innerText = result.incident_note;
+            } catch (e) {
+                noteEl.innerText = 'Error generating note: ' + e;
+            } finally {
+                btnEl.innerHTML = 'Generate AI Incident Report';
+                btnEl.disabled = false;
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

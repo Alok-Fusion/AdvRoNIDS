@@ -1,0 +1,570 @@
+{
+  "Flow Duration": {
+    "raw_name": "Flow Duration",
+    "label": "Connection Duration",
+    "tooltip": "Total time elapsed from the first packet to the last packet in this network flow (an attacker could delay packets to manipulate this).",
+    "category": "Timing Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Total Fwd Packets": {
+    "raw_name": "Total Fwd Packets",
+    "label": "Total Outgoing Packets Sent",
+    "tooltip": "Total count of individual packets sent by the client.",
+    "category": "Volume Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Total Backward Packets": {
+    "raw_name": "Total Backward Packets",
+    "label": "Total Incoming Packets Received",
+    "tooltip": "Total count of individual response packets returned by the server.",
+    "category": "Volume Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Fwd Packets Length Total": {
+    "raw_name": "Fwd Packets Length Total",
+    "label": "Total Outgoing Data Volume",
+    "tooltip": "Total sum of all payload bytes sent in the forward (client-to-server) direction.",
+    "category": "Volume Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Bwd Packets Length Total": {
+    "raw_name": "Bwd Packets Length Total",
+    "label": "Total Incoming Data Volume",
+    "tooltip": "Total sum of all payload bytes received in the backward (server-to-client) direction.",
+    "category": "Volume Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Fwd Packet Length Max": {
+    "raw_name": "Fwd Packet Length Max",
+    "label": "Largest Outgoing Packet Size",
+    "tooltip": "Maximum byte payload size among all outgoing packets sent by the client.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Fwd Packet Length Min": {
+    "raw_name": "Fwd Packet Length Min",
+    "label": "Smallest Outgoing Packet Size",
+    "tooltip": "Minimum byte payload size among all outgoing packets sent by the client.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Fwd Packet Length Mean": {
+    "raw_name": "Fwd Packet Length Mean",
+    "label": "Average Outgoing Packet Size",
+    "tooltip": "Average payload size in bytes for outgoing client packets (easily padded by attackers).",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Fwd Packet Length Std": {
+    "raw_name": "Fwd Packet Length Std",
+    "label": "Outgoing Packet Size Variation",
+    "tooltip": "Standard deviation in outgoing packet sizes \u2014 steady fixed-size packets vs. variable payloads.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Bwd Packet Length Max": {
+    "raw_name": "Bwd Packet Length Max",
+    "label": "Largest Server Response Packet",
+    "tooltip": "Maximum byte payload size among all response packets returned by the server.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Bwd Packet Length Min": {
+    "raw_name": "Bwd Packet Length Min",
+    "label": "Smallest Server Response Packet",
+    "tooltip": "Minimum byte payload size among all response packets returned by the server.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Bwd Packet Length Mean": {
+    "raw_name": "Bwd Packet Length Mean",
+    "label": "Average Server Response Size",
+    "tooltip": "Average payload size in bytes for response packets returned by the server.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Bwd Packet Length Std": {
+    "raw_name": "Bwd Packet Length Std",
+    "label": "Server Response Size Variation",
+    "tooltip": "Variation in byte sizes of server response packets.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Flow Bytes/s": {
+    "raw_name": "Flow Bytes/s",
+    "label": "Data Transfer Speed (Bytes/sec)",
+    "tooltip": "Total byte transmission rate per second across the connection.",
+    "category": "Throughput Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Flow Packets/s": {
+    "raw_name": "Flow Packets/s",
+    "label": "Packet Transmission Rate (Pkts/sec)",
+    "tooltip": "Number of packets sent per second across the entire flow.",
+    "category": "Throughput Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Flow IAT Mean": {
+    "raw_name": "Flow IAT Mean",
+    "label": "Average Pause Between Packets",
+    "tooltip": "Average time elapsed between consecutive packets in the flow (manipulable by pacing traffic).",
+    "category": "Timing Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Flow IAT Std": {
+    "raw_name": "Flow IAT Std",
+    "label": "Packet Timing Consistency",
+    "tooltip": "Variation in timing between packets \u2014 steady timing produces low variation while bursty traffic produces high variation.",
+    "category": "Timing Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Flow IAT Max": {
+    "raw_name": "Flow IAT Max",
+    "label": "Longest Pause Between Packets",
+    "tooltip": "The single longest delay observed between any two packets in the entire flow.",
+    "category": "Timing Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Flow IAT Min": {
+    "raw_name": "Flow IAT Min",
+    "label": "Shortest Pause Between Packets",
+    "tooltip": "The shortest delay recorded between any two consecutive packets in the flow.",
+    "category": "Timing Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Fwd IAT Total": {
+    "raw_name": "Fwd IAT Total",
+    "label": "Total Outgoing Packet Delays",
+    "tooltip": "The combined time spent waiting between outgoing packets sent by the client.",
+    "category": "Timing Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Fwd IAT Mean": {
+    "raw_name": "Fwd IAT Mean",
+    "label": "Average Outgoing Packet Pause",
+    "tooltip": "Average time elapsed between consecutive outgoing packets sent to the server.",
+    "category": "Timing Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Fwd IAT Std": {
+    "raw_name": "Fwd IAT Std",
+    "label": "Outgoing Packet Timing Variation",
+    "tooltip": "How erratic or steady the delays are between outgoing client packets.",
+    "category": "Timing Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Fwd IAT Max": {
+    "raw_name": "Fwd IAT Max",
+    "label": "Longest Outgoing Packet Pause",
+    "tooltip": "Maximum delay recorded between any two consecutive outgoing client packets.",
+    "category": "Timing Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Fwd IAT Min": {
+    "raw_name": "Fwd IAT Min",
+    "label": "Shortest Outgoing Packet Pause",
+    "tooltip": "Minimum delay recorded between any two consecutive outgoing client packets.",
+    "category": "Timing Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Bwd IAT Total": {
+    "raw_name": "Bwd IAT Total",
+    "label": "Total Incoming Response Delays",
+    "tooltip": "The combined time spent waiting between incoming response packets from the server.",
+    "category": "Timing Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Bwd IAT Mean": {
+    "raw_name": "Bwd IAT Mean",
+    "label": "Average Incoming Response Pause",
+    "tooltip": "Average time elapsed between consecutive response packets arriving from the server.",
+    "category": "Timing Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Bwd IAT Std": {
+    "raw_name": "Bwd IAT Std",
+    "label": "Incoming Response Timing Variation",
+    "tooltip": "How much the delays between server response packets fluctuate.",
+    "category": "Timing Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Bwd IAT Max": {
+    "raw_name": "Bwd IAT Max",
+    "label": "Longest Incoming Response Pause",
+    "tooltip": "Maximum delay recorded between any two consecutive server response packets.",
+    "category": "Timing Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Bwd IAT Min": {
+    "raw_name": "Bwd IAT Min",
+    "label": "Shortest Incoming Response Pause",
+    "tooltip": "Minimum delay recorded between any two consecutive server response packets.",
+    "category": "Timing Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Fwd PSH Flags": {
+    "raw_name": "Fwd PSH Flags",
+    "label": "Client Push Flag Counter (Frozen)",
+    "tooltip": "Structural counter for TCP Push flags sent by the client.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "Fwd URG Flags": {
+    "raw_name": "Fwd URG Flags",
+    "label": "Client Urgent Flag Counter (Frozen)",
+    "tooltip": "Structural counter for TCP Urgent flags sent by the client.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "Fwd Header Length": {
+    "raw_name": "Fwd Header Length",
+    "label": "Client TCP/IP Header Length (Frozen)",
+    "tooltip": "A structural protocol header size in bytes \u2014 fixed by the TCP/IP stack; cannot be arbitrarily changed without corrupting the connection.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "Bwd Header Length": {
+    "raw_name": "Bwd Header Length",
+    "label": "Server TCP/IP Header Length (Frozen)",
+    "tooltip": "A structural protocol header size for server responses \u2014 fixed by protocol standards.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "Fwd Packets/s": {
+    "raw_name": "Fwd Packets/s",
+    "label": "Outgoing Packet Rate (Pkts/sec)",
+    "tooltip": "Rate of outgoing packets transmitted by the client per second.",
+    "category": "Throughput Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Bwd Packets/s": {
+    "raw_name": "Bwd Packets/s",
+    "label": "Incoming Packet Rate (Pkts/sec)",
+    "tooltip": "Rate of incoming response packets received from the server per second.",
+    "category": "Throughput Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Packet Length Min": {
+    "raw_name": "Packet Length Min",
+    "label": "Overall Smallest Packet Size",
+    "tooltip": "Minimum packet size observed across both flow directions.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Packet Length Max": {
+    "raw_name": "Packet Length Max",
+    "label": "Overall Largest Packet Size",
+    "tooltip": "Maximum packet size observed across both flow directions.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Packet Length Mean": {
+    "raw_name": "Packet Length Mean",
+    "label": "Overall Average Packet Size",
+    "tooltip": "Average packet length in bytes across the entire bidirectional flow.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Packet Length Std": {
+    "raw_name": "Packet Length Std",
+    "label": "Overall Packet Size Variation",
+    "tooltip": "Spread of packet sizes across the entire connection.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Packet Length Variance": {
+    "raw_name": "Packet Length Variance",
+    "label": "Packet Size Variance",
+    "tooltip": "Statistical variance in packet lengths throughout the connection.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "FIN Flag Count": {
+    "raw_name": "FIN Flag Count",
+    "label": "FIN Termination Flag (Frozen)",
+    "tooltip": "TCP Finished flag indicating graceful connection teardown \u2014 closing the connection.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "SYN Flag Count": {
+    "raw_name": "SYN Flag Count",
+    "label": "SYN Handshake Flag (Frozen)",
+    "tooltip": "TCP Synchronize flag used strictly during connection establishment \u2014 cannot be modified on an active session.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "RST Flag Count": {
+    "raw_name": "RST Flag Count",
+    "label": "RST Connection Reset Flag (Frozen)",
+    "tooltip": "TCP Reset flag indicating immediate connection abort.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "PSH Flag Count": {
+    "raw_name": "PSH Flag Count",
+    "label": "PSH Push Data Flag (Frozen)",
+    "tooltip": "TCP Push flag requesting immediate buffer delivery to the application.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "ACK Flag Count": {
+    "raw_name": "ACK Flag Count",
+    "label": "ACK Acknowledgment Flag (Frozen)",
+    "tooltip": "TCP Acknowledgment flag indicating received data packets \u2014 mandatory for stateful communication.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "URG Flag Count": {
+    "raw_name": "URG Flag Count",
+    "label": "URG Urgent Data Flag (Frozen)",
+    "tooltip": "TCP Urgent flag indicating high-priority out-of-band data.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "CWE Flag Count": {
+    "raw_name": "CWE Flag Count",
+    "label": "CWE Congestion Window Flag (Frozen)",
+    "tooltip": "TCP Congestion Window Reduced flag defined by RFC 3168.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "ECE Flag Count": {
+    "raw_name": "ECE Flag Count",
+    "label": "ECE Explicit Congestion Flag (Frozen)",
+    "tooltip": "TCP ECN-Echo flag indicating network router congestion notifications.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "Down/Up Ratio": {
+    "raw_name": "Down/Up Ratio",
+    "label": "Download vs Upload Ratio",
+    "tooltip": "Ratio of received (downstream) packets to sent (upstream) packets.",
+    "category": "Traffic Ratio",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Avg Packet Size": {
+    "raw_name": "Avg Packet Size",
+    "label": "Mean Flow Packet Size",
+    "tooltip": "Average size of individual packets transmitted during the session.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Avg Fwd Segment Size": {
+    "raw_name": "Avg Fwd Segment Size",
+    "label": "Average Outgoing Segment Size",
+    "tooltip": "Mean TCP segment size for forward packets sent by the client.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Avg Bwd Segment Size": {
+    "raw_name": "Avg Bwd Segment Size",
+    "label": "Average Incoming Segment Size",
+    "tooltip": "Mean TCP segment size for response packets sent by the server.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Subflow Fwd Packets": {
+    "raw_name": "Subflow Fwd Packets",
+    "label": "Subflow Outgoing Packet Count",
+    "tooltip": "Count of forward packets belonging to individual flow sub-sequences.",
+    "category": "Volume Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Subflow Fwd Bytes": {
+    "raw_name": "Subflow Fwd Bytes",
+    "label": "Subflow Outgoing Byte Volume",
+    "tooltip": "Total forward byte volume in individual flow sub-sequences.",
+    "category": "Volume Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Subflow Bwd Packets": {
+    "raw_name": "Subflow Bwd Packets",
+    "label": "Subflow Incoming Packet Count",
+    "tooltip": "Count of response packets belonging to individual flow sub-sequences.",
+    "category": "Volume Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Subflow Bwd Bytes": {
+    "raw_name": "Subflow Bwd Bytes",
+    "label": "Subflow Incoming Byte Volume",
+    "tooltip": "Total response byte volume in individual flow sub-sequences.",
+    "category": "Volume Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Init Fwd Win Bytes": {
+    "raw_name": "Init Fwd Win Bytes",
+    "label": "Initial Client Window Size (Frozen)",
+    "tooltip": "Initial TCP receive window size negotiated at connection handshake \u2014 a protocol-level invariant.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "Init Bwd Win Bytes": {
+    "raw_name": "Init Bwd Win Bytes",
+    "label": "Initial Server Window Size (Frozen)",
+    "tooltip": "Initial TCP receive window size set by the server during handshake \u2014 a protocol-level invariant.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "Fwd Act Data Packets": {
+    "raw_name": "Fwd Act Data Packets",
+    "label": "Outgoing Packets with Data Payload",
+    "tooltip": "Number of outgoing forward packets that contain at least 1 byte of actual application data payload.",
+    "category": "Volume Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Fwd Seg Size Min": {
+    "raw_name": "Fwd Seg Size Min",
+    "label": "Minimum Outgoing TCP Segment Size",
+    "tooltip": "Minimum TCP segment size observed for outgoing client packets.",
+    "category": "Packet Size",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Active Mean": {
+    "raw_name": "Active Mean",
+    "label": "Average Active Connection Period",
+    "tooltip": "Average duration the flow was actively transmitting data between idle periods.",
+    "category": "Activity Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Active Std": {
+    "raw_name": "Active Std",
+    "label": "Active Period Consistency",
+    "tooltip": "Variation in the duration of active transmission periods.",
+    "category": "Activity Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Active Max": {
+    "raw_name": "Active Max",
+    "label": "Longest Active Transmission Period",
+    "tooltip": "Maximum time spent actively transmitting data before pausing.",
+    "category": "Activity Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Active Min": {
+    "raw_name": "Active Min",
+    "label": "Shortest Active Transmission Period",
+    "tooltip": "Minimum time spent actively transmitting data between pauses.",
+    "category": "Activity Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Idle Mean": {
+    "raw_name": "Idle Mean",
+    "label": "Average Idle Silence Duration",
+    "tooltip": "Average time the connection sat completely quiet with zero packet transmissions.",
+    "category": "Activity Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Idle Std": {
+    "raw_name": "Idle Std",
+    "label": "Idle Duration Variation",
+    "tooltip": "Variation in how long the connection remained silent between bursts.",
+    "category": "Activity Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Idle Max": {
+    "raw_name": "Idle Max",
+    "label": "Longest Idle Silence Period",
+    "tooltip": "Maximum duration of complete silence on the network connection.",
+    "category": "Activity Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Idle Min": {
+    "raw_name": "Idle Min",
+    "label": "Shortest Idle Silence Period",
+    "tooltip": "Minimum duration of complete silence between data bursts.",
+    "category": "Activity Metric",
+    "is_frozen": false,
+    "constraint_type": "Perturbable Metric"
+  },
+  "Protocol_0": {
+    "raw_name": "Protocol_0",
+    "label": "Protocol: HOPOPT (Frozen)",
+    "tooltip": "IPv6 Hop-by-Hop Option indicator \u2014 fixed structural protocol classification.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "Protocol_6": {
+    "raw_name": "Protocol_6",
+    "label": "Protocol: TCP (Frozen)",
+    "tooltip": "Transmission Control Protocol indicator \u2014 fixed structural protocol classification.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  },
+  "Protocol_17": {
+    "raw_name": "Protocol_17",
+    "label": "Protocol: UDP (Frozen)",
+    "tooltip": "User Datagram Protocol indicator \u2014 fixed structural protocol classification.",
+    "category": "Protocol Invariant",
+    "is_frozen": true,
+    "constraint_type": "Frozen Protocol Invariant (\u03a0_S)"
+  }
+}

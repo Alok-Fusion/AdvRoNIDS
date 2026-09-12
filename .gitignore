@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+.env
+
+# Large dataset files (Raw CSVs, large training parquet files > 50MB)
+data/raw_csv/
+data/*.parquet
+data/*.csv
+data/processed/*.csv
+data/processed/X_train.parquet
+data/processed/X_val.parquet
+data/processed/X_test.parquet
+data/processed/y_train.parquet
+data/processed/y_val.parquet
+data/processed/y_test.parquet
+
+# Logs and runtime traces
+*.log
+.coverage
+htmlcov/
+.pytest_cache/
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

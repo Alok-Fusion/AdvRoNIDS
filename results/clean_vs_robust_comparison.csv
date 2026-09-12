@@ -1,0 +1,23 @@
+Model,Attack,Epsilon,Constraint,Accuracy_Pct,Macro_F1,Weighted_F1,Delta_Accuracy_Pct
+Clean Model A,Clean Baseline,0.0,N/A,90.45,0.4932,0.9293,0.0
+Robust Model B,Clean Baseline,0.0,N/A,90.858,0.5204,0.9268,0.408
+Clean Model A,FGSM,0.1,Unconstrained,40.444,0.0693,0.5275,0.0
+Robust Model B,FGSM,0.1,Unconstrained,84.818,0.3597,0.8854,44.374
+Clean Model A,FGSM,0.1,Constrained (Pi_S),55.962,0.1272,0.6581,0.0
+Robust Model B,FGSM,0.1,Constrained (Pi_S),89.202,0.4374,0.9153,33.24
+Clean Model A,PGD-7,0.01,Constrained (Pi_S),85.66,0.4267,0.8951,0.0
+Robust Model B,PGD-7,0.01,Constrained (Pi_S),90.668,0.5155,0.9254,5.008
+Clean Model A,PGD-7,0.01,Unconstrained,81.4,0.3687,0.8637,0.0
+Robust Model B,PGD-7,0.01,Unconstrained,90.428,0.5101,0.9237,9.028
+Clean Model A,PGD-7,0.05,Constrained (Pi_S),68.634,0.1927,0.7686,0.0
+Robust Model B,PGD-7,0.05,Constrained (Pi_S),89.544,0.4785,0.9178,20.91
+Clean Model A,PGD-7,0.05,Unconstrained,28.58,0.0868,0.389,0.0
+Robust Model B,PGD-7,0.05,Unconstrained,87.71,0.4268,0.9054,59.13
+Clean Model A,PGD-7,0.1,Constrained (Pi_S),25.112,0.0823,0.3441,0.0
+Robust Model B,PGD-7,0.1,Constrained (Pi_S),87.96,0.4118,0.9072,62.848
+Clean Model A,PGD-7,0.1,Unconstrained,4.02,0.0213,0.0651,0.0
+Robust Model B,PGD-7,0.1,Unconstrained,79.93,0.3093,0.8495,75.91
+Clean Model A,PGD-7,0.2,Constrained (Pi_S),7.57,0.0302,0.1192,0.0
+Robust Model B,PGD-7,0.2,Constrained (Pi_S),78.192,0.2012,0.8313,70.622
+Clean Model A,PGD-7,0.2,Unconstrained,0.406,0.0006,0.0075,0.0
+Robust Model B,PGD-7,0.2,Unconstrained,34.236,0.0766,0.4638,33.83

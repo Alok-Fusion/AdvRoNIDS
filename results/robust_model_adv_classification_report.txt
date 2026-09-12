@@ -1,0 +1,29 @@
+================================================================================
+AdvRoNIDS Model B (Robust 1D-CNN) - Constrained PGD-7 (eps=0.10) Classification Report
+================================================================================
+
+                          precision    recall  f1-score   support
+
+                  Benign     0.9992    0.8649    0.9272     42452
+                     Bot     0.0289    0.8788    0.0559        33
+                    DDoS     0.5631    0.9969    0.7197      2868
+           DoS GoldenEye     0.2225    0.9913    0.3635       231
+                DoS Hulk     0.9200    0.9504    0.9350      3872
+        DoS Slowhttptest     0.5189    0.9322    0.6667       118
+           DoS slowloris     0.4640    0.9587    0.6253       121
+             FTP-Patator     0.1689    0.9403    0.2864       134
+              Heartbleed     1.0000    1.0000    1.0000         1
+            Infiltration     0.0000    0.0000    0.0000         2
+                PortScan     0.0972    0.4667    0.1609        45
+             SSH-Patator     0.1522    0.8904    0.2600        73
+  Web Attack-Brute Force     0.0989    0.8235    0.1767        34
+Web Attack-Sql Injection     0.0000    0.0000    0.0000         1
+          Web Attack-XSS     0.0000    0.0000    0.0000        15
+
+                accuracy                         0.8796     50000
+               macro avg     0.3489    0.7129    0.4118     50000
+            weighted avg     0.9562    0.8796    0.9072     50000
+
+Adversarial Test Accuracy:    87.960%
+Adversarial Test Macro-F1:    0.4118
+Adversarial Test Weighted-F1: 0.9072
