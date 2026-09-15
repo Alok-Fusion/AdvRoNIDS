@@ -864,6 +864,7 @@ def get_analytics_data():
 
 
 @app.post("/api/generate-novel-attack")
+@app.post("/generate-novel-attack")
 def generate_novel_attack():
     """
     Generates a novel adversarial cyber attack profile using Ollama LLM,
