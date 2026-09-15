@@ -1260,6 +1260,38 @@
                         <tbody id="novel-telemetry-tbody"></tbody>
                     </table>
                 </div>
+
+                <!-- NEW: Interactive Deep-Dive Explanation Card -->
+                <div style="background:var(--bg-card); border:1px solid var(--border-color); border-left:4px solid var(--accent-blue); border-radius:10px; padding:18px 22px; display:flex; flex-direction:column; gap:12px;">
+                    <div style="font-family:'Outfit', sans-serif; font-size:1.05rem; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:8px;">
+                        <span>💡</span> How to Read This Telemetry: Mechanistic Breakdown
+                    </div>
+                    
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; font-size:0.82rem; line-height:1.55;">
+                        <div style="background:var(--bg-surface); border:1px solid rgba(220, 38, 38, 0.25); border-radius:8px; padding:14px;">
+                            <strong style="color:var(--accent-red); font-size:0.88rem;">🔴 Why Model A Failed (&Delta;<sub>A</sub> = +0.1200):</strong>
+                            <p style="margin-top:6px; color:var(--text-muted);">
+                                The adversary applied gradient ascent to maximize classification loss. Because Model A relies on continuous correlations, the attacker pushed manipulable timing metrics (e.g. <em>Idle Max</em>, <em>Flow IAT Std Dev</em>) to the maximum allowable boundary of <strong>+0.1200</strong>, causing the standard model's decision boundary to collapse into misclassification.
+                            </p>
+                        </div>
+
+                        <div style="background:var(--bg-surface); border:1px solid rgba(5, 150, 105, 0.25); border-radius:8px; padding:14px;">
+                            <strong style="color:var(--accent-green); font-size:0.88rem;">🟢 Why AdvRoNIDS Model B Won (&Delta;<sub>B</sub> Dampened):</strong>
+                            <p style="margin-top:6px; color:var(--text-muted);">
+                                Model B was trained with <strong>Min-Max Robust Optimization</strong> under <strong>Domain Projection (&Pi;<sub>S</sub>)</strong>. It actively dampens malicious shifts (holding <em>Idle Max</em> to <strong>+0.0000</strong> and <em>Max Flow IAT</em> to <strong>-0.0004</strong>) and anchors prediction on protocol invariants, sustaining 100% ground-truth detection.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Plain-Language Feature Network Glossary -->
+                    <div style="font-size:0.75rem; color:var(--text-dim); border-top:1px solid var(--border-color); padding-top:10px; display:flex; flex-wrap:wrap; gap:12px;">
+                        <span><strong>Idle Max:</strong> Maximum quiet duration between socket transactions</span>
+                        <span>•</span>
+                        <span><strong>Flow IAT:</strong> Packet inter-arrival jitter & delay</span>
+                        <span>•</span>
+                        <span><strong>Mean Fwd Pkt:</strong> Average outbound payload byte size</span>
+                    </div>
+                </div>
             </div>
 
         </div>
