@@ -970,8 +970,8 @@
             <div class="novel-banner-header">
                 <div>
                     <div class="slide-tag">ACTIVE ADVERSARIAL THREAT PROFILE (OLLAMA SYNTHESIZED)</div>
-                    <div style="font-family:'Outfit', sans-serif; font-size:1.5rem; font-weight:800; color:var(--text-main);" id="novel-attack-name">Adaptive Timing and Size Poisoning</div>
-                    <div style="font-size:0.85rem; color:var(--text-muted); max-width:900px;" id="novel-attack-brief">The attacker crafts malicious packets with carefully perturbed timing and size features to evade AI detection.</div>
+                    <div style="font-family:'Outfit', sans-serif; font-size:1.5rem; font-weight:800; color:var(--text-main);" id="novel-attack-name">Awaiting Threat Synthesis</div>
+                    <div style="font-size:0.85rem; color:var(--text-muted); max-width:900px;" id="novel-attack-brief">Click "🔮 Synthesize Novel Attack (Ollama)" above to command the local Ollama LLM to synthesize a new cyber attack vector in real-time.</div>
                 </div>
 
                 <button class="hud-btn btn-primary" onclick="downloadCurrentAttackPdf()" style="padding:10px 18px;">
@@ -981,10 +981,10 @@
 
             <!-- Threat Profile Tags -->
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                <span class="metric-badge badge-neutral" id="novel-actor-tag">Attributed: Blackhide</span>
-                <span class="metric-badge badge-neutral" id="novel-mitre-tag">MITRE: T1048.005 - Resource Exhaustion</span>
-                <span class="metric-badge badge-neutral" id="novel-target-tag">Target: Web Application / Port 80</span>
-                <span class="metric-badge badge-cyan" id="novel-eps-tag">&epsilon; = 0.12 (7 Steps)</span>
+                <span class="metric-badge badge-neutral" id="novel-actor-tag">Attributed: Standby</span>
+                <span class="metric-badge badge-neutral" id="novel-mitre-tag">MITRE: Standby</span>
+                <span class="metric-badge badge-neutral" id="novel-target-tag">Target: Standby</span>
+                <span class="metric-badge badge-cyan" id="novel-eps-tag">&epsilon; = Standby</span>
             </div>
 
             <!-- Forensics Analysis Grid -->
@@ -992,23 +992,21 @@
                 <div class="forensics-box">
                     <div class="forensics-title"><span>📋</span> Executive Threat Assessment</div>
                     <div id="novel-exec-summary" style="color:var(--text-muted);">
-                        The attack leveraged subtle manipulation of idle max and flow inter-arrival times to evade detection by Model A. Model B correctly identified the attack, demonstrating robust adversarial resilience.
+                        Awaiting attack generation. The AI Red Team engine will evaluate how Model A vs Model B responds to the newly synthesized attack vector.
                     </div>
                 </div>
 
                 <div class="forensics-box">
                     <div class="forensics-title"><span>🔍</span> Exploitation Vector & Root Cause</div>
                     <div id="novel-root-cause" style="color:var(--text-muted);">
-                        The attack exploited the undefended model's sensitivity to continuous timing features. Reliance on fragile correlations caused Model A's decision boundary to collapse.
+                        Awaiting attack generation. Feature perturbation analysis and mathematical gradient shifts will appear here upon synthesis.
                     </div>
                 </div>
 
                 <div class="forensics-box">
                     <div class="forensics-title"><span>🛡️</span> Firewall & Mitigation Playbook</div>
                     <div id="novel-mitigation" style="color:var(--text-muted); white-space:pre-line;">
-                        • Deploy AdvRoNIDS invariant neural filters at edge gateway.
-                        • Implement stateful packet inspection correlating TCP window size with inter-arrival times.
-                        • Retrain models with Min-Max domain projection (&Pi;<sub>S</sub>).
+                        Awaiting attack generation. Targeted IDS rules and firewall countermeasures will be generated for the novel attack.
                     </div>
                 </div>
             </div>
@@ -1027,33 +1025,13 @@
                     </thead>
                     <tbody id="novel-telemetry-tbody">
                         <tr>
-                            <td><strong>Idle Max</strong></td>
-                            <td><span class="metric-badge badge-cyan">MANIPULABLE</span></td>
-                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-red);">+0.1200</td>
-                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-green);">+0.0000</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Flow Inter-Arrival Time Std Dev</strong></td>
-                            <td><span class="metric-badge badge-cyan">MANIPULABLE</span></td>
-                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-red);">+0.1200</td>
-                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-green);">+0.1200</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Maximum Flow Inter-Arrival Time</strong></td>
-                            <td><span class="metric-badge badge-cyan">MANIPULABLE</span></td>
-                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-red);">+0.1200</td>
-                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-green);">-0.0004</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Mean Forward Packet Length</strong></td>
-                            <td><span class="metric-badge badge-cyan">MANIPULABLE</span></td>
-                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-red);">+0.1200</td>
-                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-green);">+0.0514</td>
+                            <td colspan="4" style="text-align:center; color:var(--text-muted); padding:16px;">
+                                No novel attack synthesized yet. Click <strong>"🔮 Synthesize Novel Attack (Ollama)"</strong> above to generate and test.
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-
             <!-- Deep-Dive Mechanistic Explanation Card -->
             <div style="background:var(--bg-card); border:1px solid var(--border-color); border-left:4px solid var(--accent-blue); border-radius:10px; padding:18px 22px; display:flex; flex-direction:column; gap:12px;">
                 <div style="font-family:'Outfit', sans-serif; font-size:1.05rem; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:8px;">
@@ -1722,8 +1700,25 @@
                 btn.innerHTML = '<span>⏳ Synthesizing Threat via Ollama...</span>';
             }
 
-            document.getElementById('novel-attack-name').innerText = 'Synthesizing novel threat scenario via Ollama...';
-            document.getElementById('novel-attack-brief').innerText = 'Please wait while Ollama Red Team model crafts attack parameters and executes live PGD test...';
+            // Real-time HUD & Radar Alert State
+            document.getElementById('inspection-state-tag').innerText = 'OLLAMA SYNTHESIS ACTIVE';
+            document.getElementById('packet-flow-id').innerText = 'FLOW_SYNTHESIS';
+            document.getElementById('packet-category-name').innerText = 'Synthesizing Live Adversarial Vector...';
+            
+            // Forensics card loading state
+            document.getElementById('novel-attack-name').innerText = 'Synthesizing Novel Threat Scenario...';
+            document.getElementById('novel-attack-brief').innerText = 'Connecting to local Ollama LLM to formulate a novel cyber attack scenario, compute PGD perturbations, and test dual-model defense...';
+            document.getElementById('novel-actor-tag').innerText = 'Attributed: Generating...';
+            document.getElementById('novel-mitre-tag').innerText = 'MITRE: Classifying...';
+            document.getElementById('novel-target-tag').innerText = 'Target: Profiling...';
+            document.getElementById('novel-eps-tag').innerText = '\u03b5 = Computing...';
+            document.getElementById('novel-exec-summary').innerText = 'Ollama Red Team model is analyzing adversarial perturbation vectors...';
+            document.getElementById('novel-root-cause').innerText = 'Calculating feature sensitivity drifts and \u03a0_S invariance boundaries...';
+            document.getElementById('novel-mitigation').innerText = 'Generating targeted firewall & IDS defense playbooks...';
+
+            // Pulse radar blips while synthesizing
+            triggerBlipThreatPulse(true);
+            playSound('intercept');
 
             try {
                 const res = await fetch('/api/generate-novel-attack', { method: 'POST' });
@@ -1733,13 +1728,14 @@
 
                 // 1. Update Top Radar & Verdict Station
                 document.getElementById('packet-flow-id').innerText = data.flow_id.split('_').slice(0, 3).join('_');
-                document.getElementById('packet-category-name').innerText = `${data.attack_name} (${data.base_category})`;
+                document.getElementById('packet-category-name').innerText = `${data.attack_name} [${data.base_category}]`;
                 document.getElementById('packet-target').innerText = data.target_service;
-                document.getElementById('inspection-state-tag').innerText = 'OLLAMA ATTACK ACTIVE';
+                document.getElementById('inspection-state-tag').innerText = 'NOVEL THREAT INTERCEPTED';
 
-                // Trigger Radar Threat Pulse & Audio
-                triggerBlipThreatPulse(true);
-                playSound('intercept');
+                // Staggered multi-blip radar threat pulses
+                for (let i = 0; i < 4; i++) {
+                    setTimeout(() => triggerBlipThreatPulse(true), i * 180);
+                }
 
                 const isEvadedA = data.model_a_evaded;
                 const isDefendedB = data.model_b_defended;
@@ -1783,7 +1779,7 @@
                     }
                 }, 200);
 
-                // 2. Update Forensics Section
+                // 2. Update Forensics Section with Ollama findings
                 document.getElementById('novel-attack-name').innerText = data.attack_name;
                 document.getElementById('novel-attack-brief').innerText = data.scenario_brief;
                 document.getElementById('novel-actor-tag').innerText = `Attributed: ${data.threat_actor}`;
@@ -1792,11 +1788,11 @@
                 document.getElementById('novel-eps-tag').innerText = `\u03b5 = ${data.epsilon.toFixed(2)} (${data.num_steps} Steps)`;
 
                 const f = data.forensics || {};
-                document.getElementById('novel-exec-summary').innerText = f.executive_summary || '--';
-                document.getElementById('novel-root-cause').innerText = f.root_cause_analysis || '--';
-                document.getElementById('novel-mitigation').innerText = f.mitigation_playbook || '--';
+                document.getElementById('novel-exec-summary').innerText = f.executive_summary || `Attack '${data.attack_name}' targeted ${data.target_service}. Model A was evaded into '${data.model_a_pred}', while Model B defended successfully.`;
+                document.getElementById('novel-root-cause').innerText = f.root_cause_analysis || `Adversarial PGD perturbing non-frozen flow metrics caused Model A's fragile correlation boundary to collapse.`;
+                document.getElementById('novel-mitigation').innerText = f.mitigation_playbook || `• Deploy AdvRoNIDS invariant neural filters\n• Restrict unauthorized traffic on ${data.target_service}\n• Enforce domain projection \u03a0_S at edge gateway.`;
 
-                // 3. Update Telemetry Table
+                // 3. Update Telemetry Table with real PyTorch gradient shifts
                 const tbody = document.getElementById('novel-telemetry-tbody');
                 tbody.innerHTML = '';
                 (data.top_features || []).forEach(feat => {
@@ -1804,17 +1800,17 @@
                     tr.innerHTML = `
                         <td><strong>${feat.feature_name}</strong></td>
                         <td><span class="${feat.is_frozen ? 'metric-badge badge-neutral' : 'metric-badge badge-cyan'}">${feat.is_frozen ? 'Frozen Invariant' : 'Manipulable'}</span></td>
-                        <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-red);">${feat.delta_a >= 0 ? '+' : ''}${feat.delta_a.toFixed(4)}</td>
-                        <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-green);">${feat.delta_b >= 0 ? '+' : ''}${feat.delta_b.toFixed(4)}</td>
+                        <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-red); font-weight:700;">${feat.delta_a >= 0 ? '+' : ''}${feat.delta_a.toFixed(4)}</td>
+                        <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-green); font-weight:700;">${feat.delta_b >= 0 ? '+' : ''}${feat.delta_b.toFixed(4)}</td>
                     `;
                     tbody.appendChild(tr);
                 });
 
                 // 4. Log to Terminal
-                appendTerminalLog(`> [OLLAMA ATTACK SYNTHESIZED] Scenario: ${data.attack_name} (${data.base_category})`);
-                appendTerminalLog(`> Attributed Actor: ${data.threat_actor} | MITRE: ${data.mitre_technique}`);
-                if (isEvadedA) appendTerminalLog(`> Model A (Standard): CLASSIFICATION COMPROMISED — Evaded into '${data.model_a_pred}'`);
-                if (isDefendedB) appendTerminalLog(`> Model B (AdvRoNIDS): THREAT NEUTRALIZED — Verified '${data.model_b_pred}'`);
+                appendTerminalLog(`> [OLLAMA ATTACK SYNTHESIZED] Scenario: ${data.attack_name} [${data.base_category}]`);
+                appendTerminalLog(`> Attributed: ${data.threat_actor} | Target: ${data.target_service} | MITRE: ${data.mitre_technique}`);
+                if (isEvadedA) appendTerminalLog(`> Model A (Standard): MISCLASSIFIED into '${data.model_a_pred}' (${(data.model_a_conf*100).toFixed(1)}% conf)`);
+                if (isDefendedB) appendTerminalLog(`> Model B (AdvRoNIDS): ROBUST DEFENSE VERIFIED — '${data.model_b_pred}' (${(data.model_b_conf*100).toFixed(1)}% conf)`);
 
                 // Update Session Scoreboard
                 sessionState.total_flows++;

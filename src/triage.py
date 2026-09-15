@@ -127,37 +127,132 @@ FALLBACK_ATTACK_TEMPLATES = [
 ]
 
 
+def get_available_ollama_model(ollama_host: str = "http://localhost:11434") -> str:
+    """Detects available installed Ollama models and picks the best match."""
+    preferred = ["qwen2.5:3b", "llama3:latest", "llama3.2:3b", "deepseek-coder-v2:latest", "mistral:latest"]
+    try:
+        r = requests.get(f"{ollama_host}/api/tags", timeout=1.5)
+        if r.status_code == 200:
+            installed = [m.get("name", "") for m in r.json().get("models", [])]
+            for p in preferred:
+                if p in installed:
+                    return p
+            if installed:
+                return installed[0]
+    except Exception:
+        pass
+    return "qwen2.5:3b"
+
+
+# High-entropy seed components for procedural generation & LLM creativity priming
+ATTACK_PREFIXES = [
+    "Ghost-SYN", "Adaptive-Echo", "Subnet-Vortex", "Cipher-Shift", "Quantum-Probe",
+    "Shadow-Jitter", "Polymorphic-Pulse", "Stealth-Beacon", "Zero-Day-Strobe", "Chronos-Burst",
+    "Deep-Tunnel", "Phantom-Burst", "Neural-Desync", "BGP-Siphon", "Temporal-Drift"
+]
+
+ATTACK_SUFFIXES = [
+    "Polymorphic Flood", "Timing Desync Infiltration", "Exfiltration Beacon", "Subnet Sweep",
+    "Slowloris Header Exhaustion", "Credential Harvest Storm", "Payload Quantization Exploit",
+    "Asynchronous Micro-Burst", "Stateful Connection Bleed", "Feature-Masking Tunnel"
+]
+
+THREAT_ACTOR_POOLS = [
+    "APT-28 (Fancy Bear)", "APT-29 (Cozy Bear)", "Lazarus Group Sub-Cluster", "Sandworm Team",
+    "FIN7 Financial Threat Cluster", "Volt Typhoon Infiltration Unit", "DarkSide RaaS Syndicate",
+    "Equation Group Unit", "Magecart Supply-Chain Consortium", "BlackCat Cyber Cartel"
+]
+
+TARGET_SERVICES_POOL = [
+    "Edge BGP Router / Port 179", "Zero-Trust Bastion Host / Port 22", "NGINX SSL Reverse Proxy / Port 443",
+    "Internal Kubernetes API / Port 6443", "Core SQL Cluster / Port 3306", "Active Directory Kerberos / Port 88",
+    "Public REST Gateway / Port 8080", "Industrial SCADA Modbus / Port 502", "DNS Anycast Resolver / Port 53"
+]
+
+MITRE_TECHNIQUE_POOL = [
+    ("T1498.001", "Network Denial of Service: Direct Network Flood"),
+    ("T1499.003", "Endpoint Denial of Service: Application Exhaustion"),
+    ("T1110.001", "Credential Access: Password Guessing / Brute Force"),
+    ("T1046", "Discovery: Network Service Scanning"),
+    ("T1071.001", "Command and Control: Web Protocols Beaconing"),
+    ("T1059.007", "Execution: JavaScript / XSS Code Injection"),
+    ("T1190", "Initial Access: Exploit Public-Facing Application"),
+    ("T1048.003", "Exfiltration: Exfiltration Over Unencrypted Protocol")
+]
+
+
+def generate_procedural_novel_attack() -> Dict[str, Any]:
+    """Generates a rich, high-entropy novel attack scenario procedurally."""
+    prefix = random.choice(ATTACK_PREFIXES)
+    suffix = random.choice(ATTACK_SUFFIXES)
+    base_cat = random.choice(BENCHMARK_ATTACK_CATEGORIES)
+    actor = random.choice(THREAT_ACTOR_POOLS)
+    target = random.choice(TARGET_SERVICES_POOL)
+    mitre_id, mitre_desc = random.choice(MITRE_TECHNIQUE_POOL)
+    eps = round(random.uniform(0.08, 0.22), 2)
+    steps = random.choice([6, 7, 8, 9, 10])
+
+    evasion_mechanisms = [
+        f"Manipulates backward packet inter-arrival times and packet length variance to camouflage adversarial flow as legitimate traffic to {target}.",
+        f"Executes sub-threshold micro-burst perturbation with bounded epsilon={eps}, deliberately staying within benign statistical distributions.",
+        f"Applies non-contiguous jitter across forward and backward timing streams while strictly preserving invariant protocol flags.",
+        f"Perturbs TCP flow duration and backward header metrics using projected gradient ascent to bypass linear decision boundaries."
+    ]
+
+    return {
+        "attack_name": f"{prefix} {suffix}",
+        "base_category": base_cat,
+        "threat_actor": actor,
+        "mitre_technique": f"{mitre_id} - {mitre_desc}",
+        "target_service": target,
+        "epsilon": eps,
+        "num_steps": steps,
+        "scenario_brief": random.choice(evasion_mechanisms)
+    }
+
+
 def clean_feature_name(feat: str) -> str:
     """Converts raw dataset feature names into human-readable descriptions."""
     return FEATURE_NAME_MAP.get(feat, feat.replace("_", " "))
 
 
 def generate_novel_attack_scenario(
-    model_name: str = "qwen2.5:3b",
+    model_name: Optional[str] = None,
     ollama_host: str = "http://localhost:11434",
-    timeout: int = 8
+    timeout: int = 10
 ) -> Dict[str, Any]:
     """
-    Prompts Ollama to generate a creative, novel cyber attack scenario.
+    Prompts Ollama to generate a genuinely creative, novel cyber attack scenario.
+    Dynamically injects randomized seeds so Ollama never generates duplicate attacks.
     Returns structured parameters used directly by the AdvRoNIDS PGD simulation engine.
     """
-    prompt = f"""You are a Red Team Cyber Threat Emulator. Invent a realistic, novel adversarial cyber attack scenario for testing an AI Network Intrusion Detection System.
+    if not model_name:
+        model_name = get_available_ollama_model(ollama_host)
 
-Pick one base category from this exact list:
-{json.dumps(BENCHMARK_ATTACK_CATEGORIES)}
+    target_category = random.choice(BENCHMARK_ATTACK_CATEGORIES)
+    creative_seed_word = random.choice(ATTACK_PREFIXES)
+    random_actor_seed = random.choice(THREAT_ACTOR_POOLS)
+    random_target_seed = random.choice(TARGET_SERVICES_POOL)
+
+    prompt = f"""You are a Red Team Cyber Threat Researcher inventing a brand new, highly sophisticated adversarial network attack.
+INVENT A UNIQUE, CREATIVE ATTACK SCENARIO targeting category: "{target_category}".
+Do NOT use generic names. Create a distinct, memorable codename (e.g. incorporating themes like "{creative_seed_word}").
+
+Target Infrastructure Inspiration: {random_target_seed}
+Threat Actor Inspiration: {random_actor_seed}
 
 Respond with ONLY a valid JSON object matching this schema:
 {{
-  "attack_name": "Creative Attack Name (e.g., Ghost-SYN Polymorphic Flood)",
-  "base_category": "One exact name from the list above",
+  "attack_name": "A unique, creative attack title (e.g., '{creative_seed_word} Shadow Injection')",
+  "base_category": "{target_category}",
   "threat_actor": "Threat Actor / APT Group Name",
-  "mitre_technique": "MITRE ATT&CK ID and Technique (e.g. T1498.001 - Network Flood)",
-  "target_service": "Target Service & Port (e.g. Edge Gateway / Port 443)",
-  "epsilon": 0.12,
-  "num_steps": 7,
-  "scenario_brief": "2 sentence description of how the attacker perturbs packet timing and size features to evade AI detection."
+  "mitre_technique": "MITRE ATT&CK ID and Technique (e.g. T1498.001 - Direct Network Flood)",
+  "target_service": "Specific Target Service and Port",
+  "epsilon": {round(random.uniform(0.08, 0.22), 2)},
+  "num_steps": {random.choice([6, 7, 8, 9, 10])},
+  "scenario_brief": "2 sentence technical description of how the attacker perturbs packet timing and packet size distributions to evade AI classifiers."
 }}
-Output ONLY the JSON object. Do not add markdown backticks or explanation."""
+Output ONLY the raw JSON object. Do not include markdown ticks, preamble, or explanation."""
 
     try:
         response = requests.post(
@@ -167,8 +262,8 @@ Output ONLY the JSON object. Do not add markdown backticks or explanation."""
                 "prompt": prompt,
                 "stream": False,
                 "options": {
-                    "temperature": 0.7,
-                    "top_p": 0.9,
+                    "temperature": 0.88,
+                    "top_p": 0.95,
                     "num_predict": 300
                 }
             },
@@ -188,20 +283,20 @@ Output ONLY the JSON object. Do not add markdown backticks or explanation."""
             if data.get("base_category") in BENCHMARK_ATTACK_CATEGORIES:
                 data["epsilon"] = max(0.05, min(0.25, float(data.get("epsilon", 0.12))))
                 data["num_steps"] = max(4, min(12, int(data.get("num_steps", 7))))
+                logger.info(f"Ollama successfully generated attack: {data.get('attack_name')}")
+                return data
+            else:
+                data["base_category"] = target_category
                 return data
     except Exception as e:
-        logger.info(f"Ollama attack generation skipped ({e}). Using diverse template pool.")
+        logger.info(f"Ollama attack generation fallback ({e}). Using high-entropy procedural generator.")
 
-    # Diverse randomized fallback
-    chosen = random.choice(FALLBACK_ATTACK_TEMPLATES).copy()
-    chosen["epsilon"] = round(random.uniform(0.08, 0.20), 2)
-    chosen["num_steps"] = random.choice([6, 7, 8, 9, 10])
-    return chosen
+    return generate_procedural_novel_attack()
 
 
 def generate_custom_attack_report(
     attack_info: Dict[str, Any],
-    model_name: str = "qwen2.5:3b",
+    model_name: Optional[str] = None,
     ollama_host: str = "http://localhost:11434",
     timeout: int = 10
 ) -> Dict[str, str]:
@@ -209,6 +304,9 @@ def generate_custom_attack_report(
     Generates tailored threat forensics narrative and firewall mitigation playbooks
     for a specific simulated attack scenario based on actual model findings.
     """
+    if not model_name:
+        model_name = get_available_ollama_model(ollama_host)
+
     attack_name = attack_info.get("attack_name", "Adversarial Intrusion")
     base_cat = attack_info.get("base_category", "Unknown")
     pred_a = attack_info.get("model_a_pred", "Benign")
@@ -220,24 +318,25 @@ def generate_custom_attack_report(
 
     feat_str = ", ".join([f"{f.get('feature_name', '')} (Δ: {f.get('delta_a', 0.0):+.2f})" for f in top_features[:3]])
 
-    prompt = f"""You are a Principal Cybersecurity SOC Analyst evaluating an adversarial AI evasion attack.
-Write a structured threat intelligence briefing based on these findings:
+    prompt = f"""You are a Principal Cybersecurity SOC Forensics Director investigating an adversarial cyber intrusion.
+Write a structured, highly technical threat briefing based on these findings:
 
-ATTACK PROFILE:
-- Attack Scenario: {attack_name} (Base signature: {base_cat})
-- Threat Actor: {attack_info.get('threat_actor', 'Unknown')}
+ATTACK INCIDENT FINDINGS:
+- Incident Scenario: {attack_name} (Ground Truth: {base_cat})
+- Attributed Actor: {attack_info.get('threat_actor', 'Unknown')}
 - MITRE Technique: {attack_info.get('mitre_technique', 'T1498')}
-- Undefended Model A Verdict: {pred_a} ({conf_a:.1f}% confidence) -> {'COMPROMISED / EVADED' if evaded_a else 'NORMAL'}
-- AdvRoNIDS Robust Model B Verdict: {pred_b} ({conf_b:.1f}% confidence) -> DEFENDED
-- Manipulated Feature Vector: {feat_str}
+- Target: {attack_info.get('target_service', 'Edge Network')}
+- Undefended Model A Result: {pred_a} ({conf_a:.1f}% confidence) -> {'COMPROMISED / MISCLASSIFIED' if evaded_a else 'CORRECTLY IDENTIFIED'}
+- AdvRoNIDS Robust Model B Result: {pred_b} ({conf_b:.1f}% confidence) -> {'DEFENSE SUCCEEDED' if pred_b == base_cat else 'FLAGGED'}
+- Manipulated Feature Gradients: {feat_str}
 
 Respond with ONLY a JSON object containing these 3 fields:
 {{
-  "executive_summary": "2 sentences describing the attack vector and how Model A was fooled while Model B stood ground.",
-  "root_cause_analysis": "2 sentences explaining the mathematical feature perturbation exploit.",
-  "mitigation_playbook": "2-3 bullet points with specific firewall / IDS mitigation recommendations."
+  "executive_summary": "2 concise sentences explaining the attack vector and why Model A failed while Model B maintained security.",
+  "root_cause_analysis": "2 technical sentences explaining how manipulating {feat_str or 'packet timing'} deceived the decision boundary.",
+  "mitigation_playbook": "3 actionable bullet points with specific firewall/IDS and edge mitigation actions."
 }}
-Output ONLY the JSON object."""
+Output ONLY the raw JSON object."""
 
     try:
         response = requests.post(
@@ -247,7 +346,7 @@ Output ONLY the JSON object."""
                 "prompt": prompt,
                 "stream": False,
                 "options": {
-                    "temperature": 0.3,
+                    "temperature": 0.35,
                     "top_p": 0.9,
                     "num_predict": 350
                 }
@@ -261,9 +360,14 @@ Output ONLY the JSON object."""
                 if res_text.startswith("json"):
                     res_text = res_text[4:]
             res_text = res_text.strip()
-            return json.loads(res_text)
+            data = json.loads(res_text)
+            return {
+                "executive_summary": str(data.get("executive_summary", "")).strip(),
+                "root_cause_analysis": str(data.get("root_cause_analysis", "")).strip(),
+                "mitigation_playbook": str(data.get("mitigation_playbook", "")).strip()
+            }
     except Exception as e:
-        logger.info(f"Ollama custom report generation fallback ({e}).")
+        logger.info(f"Ollama custom report fallback ({e})")
 
     # High-quality deterministic analysis
     return {
