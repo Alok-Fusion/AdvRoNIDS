@@ -34,8 +34,11 @@ sys.path.insert(0, str(ROOT_DIR))
 
 from src.train_robust import AdvRoNIDS_CNN
 from src.attacks import pgd_attack_traced, pgd_attack_step_generator
-from src.triage import generate_incident_note, clean_feature_name, FEATURE_NAME_MAP
-from src.report_generator import build_session_report_pdf, build_academic_summary_pdf
+from src.triage import (
+    generate_incident_note, clean_feature_name, FEATURE_NAME_MAP,
+    generate_novel_attack_scenario, generate_custom_attack_report
+)
+from src.report_generator import build_session_report_pdf, build_attack_threat_report_pdf
 
 
 @asynccontextmanager
@@ -860,20 +863,130 @@ def get_analytics_data():
     }
 
 
+@app.post("/api/generate-novel-attack")
+def generate_novel_attack():
+    """
+    Generates a novel adversarial cyber attack profile using Ollama LLM,
+    executes real PyTorch PGD attack against Model A and Model B,
+    and returns comprehensive findings with Ollama threat forensics.
+    """
+    # 1. Synthesize novel attack profile
+    scenario = generate_novel_attack_scenario()
+    base_cat = scenario["base_category"]
+    eps = scenario["epsilon"]
+    steps = scenario["num_steps"]
+    
+    if base_cat not in class_to_idx:
+        base_cat = "SSH-Patator"
+        
+    cat_idx = class_to_idx[base_cat]
+    pool = clean_correct_indices_by_class.get(base_cat, [])
+    if not pool:
+        pool = np.where(y_test_np == cat_idx)[0].tolist()
+        
+    selected_idx = random.choice(pool)
+    x_flow = torch.tensor(X_test_np[selected_idx:selected_idx + 1])
+    y_flow = torch.tensor([cat_idx], dtype=torch.long)
+    flow_id = f"flow_novel_{selected_idx}_{base_cat.replace(' ', '_')}"
+    
+    # 2. Run real PGD attack against Model A (Clean Baseline)
+    adv_a, trace_a = pgd_attack_traced(
+        model=model_A,
+        x=x_flow,
+        y=y_flow,
+        epsilon=eps,
+        num_steps=steps,
+        alpha=eps / steps,
+        constrained=True,
+        mask=mask_t,
+        cumulative_mask=cum_mask_t,
+        emp_min=min_t,
+        emp_max=max_t,
+        idx_to_class=idx_to_class
+    )
+    
+    # 3. Run real PGD attack against Model B (AdvRoNIDS Robust)
+    adv_b, trace_b = pgd_attack_traced(
+        model=model_B,
+        x=x_flow,
+        y=y_flow,
+        epsilon=eps,
+        num_steps=steps,
+        alpha=eps / steps,
+        constrained=True,
+        mask=mask_t,
+        cumulative_mask=cum_mask_t,
+        emp_min=min_t,
+        emp_max=max_t,
+        idx_to_class=idx_to_class
+    )
+    
+    final_a = trace_a[-1]
+    final_b = trace_b[-1]
+    
+    delta_a_arr = np.array(final_a["delta"])
+    delta_b_arr = np.array(final_b["delta"])
+    top_indices = np.argsort(np.abs(delta_a_arr))[::-1][:6].tolist()
+    
+    top_features = []
+    for f_idx in top_indices:
+        f_name = feature_names[f_idx]
+        is_frz = f_idx in frozen_indices
+        top_features.append({
+            "feature_name": clean_feature_name(f_name),
+            "raw_feature_name": f_name,
+            "feature_index": f_idx,
+            "is_frozen": is_frz,
+            "delta_a": float(delta_a_arr[f_idx]),
+            "delta_b": float(delta_b_arr[f_idx])
+        })
+        
+    evaded_a = final_a["prediction"] != base_cat
+    
+    attack_payload = {
+        "flow_id": flow_id,
+        "attack_name": scenario["attack_name"],
+        "base_category": base_cat,
+        "threat_actor": scenario["threat_actor"],
+        "mitre_technique": scenario["mitre_technique"],
+        "target_service": scenario["target_service"],
+        "scenario_brief": scenario["scenario_brief"],
+        "epsilon": eps,
+        "num_steps": steps,
+        "model_a_pred": final_a["prediction"],
+        "model_a_conf": final_a["confidence"],
+        "model_a_evaded": evaded_a,
+        "model_b_pred": final_b["prediction"],
+        "model_b_conf": final_b["confidence"],
+        "model_b_defended": final_b["prediction"] == base_cat,
+        "trace_a": trace_a,
+        "trace_b": trace_b,
+        "top_features": top_features
+    }
+    
+    # 4. Generate custom Ollama Forensics & Mitigation Report
+    forensics = generate_custom_attack_report(attack_payload)
+    attack_payload["forensics"] = forensics
+    
+    return attack_payload
+
+
 class ReportRequest(BaseModel):
-    report_type: str = Field(default="session", description="'session' or 'academic'")
+    report_type: str = Field(default="session", description="'session' or 'attack'")
     session_data: Optional[Dict[str, Any]] = None
+    attack_data: Optional[Dict[str, Any]] = None
 
 
 @app.post("/generate-report")
 def generate_report(req: ReportRequest):
     """
-    Generates a publication-grade PDF report using ReportLab.
+    Generates publication-grade PDF report (Attack Forensics Report or Session Audit Report).
     Returns downloadable PDF file response.
     """
-    if req.report_type == "academic":
-        pdf_bytes = build_academic_summary_pdf()
-        filename = f"AdvRoNIDS_Academic_Results_Appendix_{int(time.time())}.pdf"
+    if req.report_type == "attack" and req.attack_data:
+        pdf_bytes = build_attack_threat_report_pdf(req.attack_data)
+        safe_name = req.attack_data.get("attack_name", "Novel_Attack").replace(" ", "_")
+        filename = f"AdvRoNIDS_Threat_Report_{safe_name}_{int(time.time())}.pdf"
     else:
         sess = req.session_data or {"total_flows": 0, "b_caught": 0, "a_missed": 0, "defense_rate": "100.0%", "incidents": []}
         pdf_bytes = build_session_report_pdf(sess)
