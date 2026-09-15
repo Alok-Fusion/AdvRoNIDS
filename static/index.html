@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdvRoNIDS | Adversarially Robust Network Intrusion Detection Platform</title>
+    <title>AdvRoNIDS | Adversarially Robust Network Intrusion Detection & Threat Synthesis</title>
     
     <!-- Fonts & Chart.js CDN -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,9 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* ------------------------------------------------------------- */
-        /* DESIGN SYSTEM - LIGHT THEME (DEFAULT) & DARK THEME SUPPORT    */
-        /* ------------------------------------------------------------- */
+        /* DESIGN SYSTEM - LIGHT THEME (DEFAULT) & DARK THEME SUPPORT */
         :root {
             --bg-base: #f8fafc;
             --bg-surface: #ffffff;
@@ -35,7 +33,6 @@
             --terminal-header-bg: #1e293b;
             --terminal-border: #334155;
             --radar-bg: #f8fafc;
-            --radar-ring: rgba(2, 132, 199, 0.18);
             --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
             --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
@@ -60,16 +57,11 @@
             --terminal-header-bg: #0d1424;
             --terminal-border: #1a2436;
             --radar-bg: #080e1a;
-            --radar-ring: rgba(6, 182, 212, 0.22);
             --shadow-card: 0 4px 25px rgba(0, 0, 0, 0.4);
             --shadow-elevated: 0 10px 35px rgba(0, 0, 0, 0.6);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -138,17 +130,9 @@
             border: 1px solid rgba(37, 99, 235, 0.25);
         }
 
-        .brand-sub {
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
+        .brand-sub { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; }
 
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .nav-actions { display: flex; align-items: center; gap: 10px; }
 
         .nav-pill-group {
             display: flex;
@@ -176,10 +160,7 @@
             white-space: nowrap;
         }
 
-        .nav-pill:hover {
-            color: var(--text-main);
-            background: var(--bg-card-hover);
-        }
+        .nav-pill:hover { color: var(--text-main); background: var(--bg-card-hover); }
 
         .nav-pill.active {
             background: linear-gradient(135deg, var(--accent-blue) 0%, #1d4ed8 100%);
@@ -203,10 +184,7 @@
             white-space: nowrap;
         }
 
-        .utility-btn:hover {
-            color: var(--text-main);
-            border-color: var(--accent-cyan);
-        }
+        .utility-btn:hover { color: var(--text-main); border-color: var(--accent-cyan); }
 
         /* PAGE CONTAINER */
         .app-page {
@@ -219,9 +197,7 @@
             animation: fadeInPage 0.2s ease-out;
         }
 
-        .app-page.active {
-            display: block;
-        }
+        .app-page.active { display: block; }
 
         @keyframes fadeInPage {
             from { opacity: 0; transform: translateY(5px); }
@@ -248,10 +224,7 @@
             transition: transform 0.2s, border-color 0.2s;
         }
 
-        .metric-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--border-highlight);
-        }
+        .metric-card:hover { transform: translateY(-2px); border-color: var(--border-highlight); }
 
         .metric-icon-wrap {
             width: 42px;
@@ -268,45 +241,17 @@
         .icon-green { background: rgba(5, 150, 105, 0.12); border: 1px solid rgba(5, 150, 105, 0.25); }
         .icon-red { background: rgba(220, 38, 38, 0.12); border: 1px solid rgba(220, 38, 38, 0.25); }
         .icon-cyan { background: rgba(2, 132, 199, 0.12); border: 1px solid rgba(2, 132, 199, 0.25); }
-        .icon-purple { background: rgba(124, 58, 237, 0.12); border: 1px solid rgba(124, 58, 237, 0.25); }
 
-        .metric-content {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            flex: 1;
-        }
-
-        .metric-title {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .metric-num {
-            font-family: 'Fira Code', monospace;
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: var(--text-main);
-            line-height: 1.2;
-        }
+        .metric-content { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+        .metric-title { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .metric-num { font-family: 'Fira Code', monospace; font-size: 1.35rem; font-weight: 700; color: var(--text-main); line-height: 1.2; }
 
         .text-green { color: var(--accent-green) !important; }
         .text-red { color: var(--accent-red) !important; }
         .text-cyan { color: var(--accent-cyan) !important; }
         .text-blue { color: var(--accent-blue) !important; }
-        .text-purple { color: var(--accent-purple) !important; }
 
-        .metric-badge {
-            font-size: 0.65rem;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 5px;
-            text-transform: uppercase;
-        }
-
+        .metric-badge { font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; }
         .badge-neutral { background: var(--bg-card); color: var(--text-muted); }
         .badge-green { background: rgba(5, 150, 105, 0.12); color: var(--accent-green); border: 1px solid rgba(5, 150, 105, 0.25); }
         .badge-red { background: rgba(220, 38, 38, 0.12); color: var(--accent-red); border: 1px solid rgba(220, 38, 38, 0.25); }
@@ -327,12 +272,7 @@
             box-shadow: var(--shadow-card);
         }
 
-        .hud-status-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+        .hud-status-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
         .status-pill {
             display: inline-flex;
@@ -344,17 +284,8 @@
             font-weight: 700;
         }
 
-        .status-running {
-            background: rgba(5, 150, 105, 0.12);
-            color: var(--accent-green);
-            border: 1px solid rgba(5, 150, 105, 0.3);
-        }
-
-        .status-paused {
-            background: rgba(217, 119, 6, 0.12);
-            color: var(--accent-amber);
-            border: 1px solid rgba(217, 119, 6, 0.3);
-        }
+        .status-running { background: rgba(5, 150, 105, 0.12); color: var(--accent-green); border: 1px solid rgba(5, 150, 105, 0.3); }
+        .status-paused { background: rgba(217, 119, 6, 0.12); color: var(--accent-amber); border: 1px solid rgba(217, 119, 6, 0.3); }
 
         .pulse-dot {
             width: 8px;
@@ -370,11 +301,7 @@
             100% { transform: scale(0.9); opacity: 0.7; }
         }
 
-        .hud-controls-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .hud-controls-group { display: flex; align-items: center; gap: 12px; }
 
         .hud-btn {
             background: var(--bg-card);
@@ -391,10 +318,7 @@
             gap: 6px;
         }
 
-        .hud-btn:hover {
-            background: var(--bg-card-hover);
-            border-color: var(--accent-blue);
-        }
+        .hud-btn:hover { background: var(--bg-card-hover); border-color: var(--accent-blue); }
 
         .hud-btn.btn-primary {
             background: linear-gradient(135deg, var(--accent-blue), #1d4ed8);
@@ -410,12 +334,8 @@
             box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
         }
 
-        .hud-btn.btn-purple:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(124, 58, 237, 0.45);
-        }
+        .hud-btn.btn-purple:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(124, 58, 237, 0.45); }
 
-        /* 2-Column Main Top Grid (Radar Left + Verdict Center) */
         .live-monitor-top-grid {
             display: grid;
             grid-template-columns: 460px 1fr;
@@ -424,9 +344,7 @@
         }
 
         @media (max-width: 1200px) {
-            .live-monitor-top-grid {
-                grid-template-columns: 1fr;
-            }
+            .live-monitor-top-grid { grid-template-columns: 1fr; }
         }
 
         .radar-panel-card {
@@ -464,11 +382,7 @@
             justify-content: center;
         }
 
-        #radarCanvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
+        #radarCanvas { width: 100%; height: 100%; display: block; }
 
         .radar-stream-ticker {
             background: var(--bg-card);
@@ -481,25 +395,9 @@
             text-align: center;
         }
 
-        .ticker-stat-item {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .ticker-stat-label {
-            font-size: 0.65rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .ticker-stat-val {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.92rem;
-            font-weight: 700;
-            color: var(--accent-cyan);
-        }
+        .ticker-stat-item { display: flex; flex-direction: column; gap: 2px; }
+        .ticker-stat-label { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .ticker-stat-val { font-family: 'Fira Code', monospace; font-size: 0.92rem; font-weight: 700; color: var(--accent-cyan); }
 
         .verdict-station-card {
             background: var(--bg-surface);
@@ -524,11 +422,7 @@
             gap: 12px;
         }
 
-        .packet-info-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
+        .packet-info-left { display: flex; align-items: center; gap: 14px; }
 
         .flow-id-badge {
             font-family: 'Fira Code', monospace;
@@ -580,34 +474,10 @@
             background: linear-gradient(180deg, rgba(5, 150, 105, 0.05) 0%, var(--bg-card) 100%);
         }
 
-        .model-box-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .model-name-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 0.92rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .confidence-meter-wrap {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .conf-label-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
+        .model-box-header { display: flex; justify-content: space-between; align-items: center; }
+        .model-name-title { font-family: 'Outfit', sans-serif; font-size: 0.92rem; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+        .confidence-meter-wrap { display: flex; flex-direction: column; gap: 6px; }
+        .conf-label-row { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); }
 
         .progress-bar-track {
             width: 100%;
@@ -640,34 +510,21 @@
             line-height: 1.35;
         }
 
-        .banner-evaded {
-            background: rgba(220, 38, 38, 0.12);
-            color: var(--accent-red);
-            border: 1px solid rgba(220, 38, 38, 0.3);
-        }
+        .banner-evaded { background: rgba(220, 38, 38, 0.12); color: var(--accent-red); border: 1px solid rgba(220, 38, 38, 0.3); }
+        .banner-defended { background: rgba(5, 150, 105, 0.12); color: var(--accent-green); border: 1px solid rgba(5, 150, 105, 0.3); }
+        .banner-normal { background: rgba(37, 99, 235, 0.1); color: var(--accent-blue); border: 1px solid rgba(37, 99, 235, 0.25); }
 
-        .banner-defended {
-            background: rgba(5, 150, 105, 0.12);
-            color: var(--accent-green);
-            border: 1px solid rgba(5, 150, 105, 0.3);
-        }
-
-        .banner-normal {
-            background: rgba(37, 99, 235, 0.1);
-            color: var(--accent-blue);
-            border: 1px solid rgba(37, 99, 235, 0.25);
-        }
-
-        /* LIVE CYBER THREAT TELEMETRY TERMINAL */
+        /* LIVE TERMINAL */
         .terminal-panel-card {
             background: var(--terminal-bg);
             border: 1px solid var(--terminal-border);
             border-radius: 14px;
             display: flex;
             flex-direction: column;
-            height: 220px;
+            height: 200px;
             box-shadow: var(--shadow-elevated);
             overflow: hidden;
+            margin-bottom: 20px;
         }
 
         .terminal-top-bar {
@@ -707,6 +564,67 @@
         .log-row.log-defended { color: #34d399; background: rgba(5, 150, 105, 0.15); padding: 2px 6px; border-radius: 4px; font-weight: 600; }
         .log-row.log-threat { color: #fca5a5; border-left: 3px solid #dc2626; padding-left: 6px; }
         .log-row.log-clean { color: #60a5fa; }
+
+        /* OLLAMA NOVEL ATTACK & FORENSICS CARD (UNIFIED IN LIVE RADAR) */
+        .novel-attack-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: var(--shadow-card);
+            margin-bottom: 20px;
+        }
+
+        .novel-banner-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .slide-tag {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .forensics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 1000px) {
+            .forensics-grid { grid-template-columns: 1fr; }
+        }
+
+        .forensics-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+
+        .forensics-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
         /* PITCH DECK STYLES */
         .pitch-deck-container {
@@ -749,17 +667,7 @@
             flex: 1;
         }
 
-        .pitch-slide.active {
-            display: flex;
-        }
-
-        .slide-tag {
-            font-size: 0.75rem;
-            font-weight: 800;
-            color: var(--accent-blue);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .pitch-slide.active { display: flex; }
 
         .slide-title {
             font-family: 'Outfit', sans-serif;
@@ -812,56 +720,7 @@
             margin-top: auto;
         }
 
-        /* OLLAMA NOVEL ATTACK & FORENSICS CARD */
-        .novel-attack-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            box-shadow: var(--shadow-card);
-            margin-top: 20px;
-        }
-
-        .novel-banner-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .forensics-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 16px;
-        }
-
-        .forensics-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            font-size: 0.82rem;
-            line-height: 1.5;
-        }
-
-        .forensics-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 0.95rem;
-            font-weight: 800;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* Shared Tables */
+        /* Telemetry Tables */
         table.telemetry-table {
             width: 100%;
             border-collapse: collapse;
@@ -892,7 +751,7 @@
 
     <!-- NAVBAR -->
     <header class="main-navbar">
-        <div class="brand-group" onclick="navigateTo('overview')">
+        <div class="brand-group" onclick="navigateTo('live-monitor')">
             <div class="logo-shield">🛡️</div>
             <div class="brand-text">
                 <div class="brand-name">
@@ -905,14 +764,11 @@
 
         <div class="nav-actions">
             <nav class="nav-pill-group">
-                <button class="nav-pill active" id="nav-overview" onclick="navigateTo('overview')">
+                <button class="nav-pill active" id="nav-live-monitor" onclick="navigateTo('live-monitor')">
+                    <span>📡</span> Live Radar & Threat Synthesis
+                </button>
+                <button class="nav-pill" id="nav-overview" onclick="navigateTo('overview')">
                     <span>📊</span> Dashboard
-                </button>
-                <button class="nav-pill" id="nav-live-monitor" onclick="navigateTo('live-monitor')">
-                    <span>📡</span> Live Radar
-                </button>
-                <button class="nav-pill" id="nav-investigation-lab" onclick="navigateTo('investigation-lab')">
-                    <span>⚡</span> Attack Sandbox
                 </button>
                 <button class="nav-pill" id="nav-pitch-deck" onclick="navigateTo('pitch-deck')">
                     <span>💼</span> Pitch Deck
@@ -935,84 +791,9 @@
     </header>
 
     <!-- ------------------------------------------------------------- -->
-    <!-- PAGE 1: OVERVIEW DASHBOARD                                    -->
+    <!-- UNIFIED VIEW: LIVE RADAR & OLLAMA THREAT SYNTHESIS MONITOR    -->
     <!-- ------------------------------------------------------------- -->
-    <main id="page-overview" class="app-page active">
-        <div class="overview-hero" style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:14px; padding:28px 32px; margin-bottom:20px; box-shadow:var(--shadow-card);">
-            <div style="font-family:'Outfit', sans-serif; font-size:1.7rem; font-weight:800; margin-bottom:8px;">AdvRoNIDS Defense Dashboard</div>
-            <div style="font-size:0.92rem; color:var(--text-muted); max-width:950px; line-height:1.6; margin-bottom:18px;">
-                Traditional AI Intrusion Detectors achieve 99.8% clean accuracy but suffer catastrophic blind spots under adversarial gradient attacks (collapsing to 12.4%). AdvRoNIDS deploys <strong>Min-Max Robust Optimization</strong> under <strong>Structural Domain Projection (&Pi;<sub>S</sub>)</strong> to guarantee invariant protection across physical network streams.
-            </div>
-        </div>
-
-        <!-- 4 Headline KPI Cards -->
-        <div class="soc-metrics-strip">
-            <div class="metric-card">
-                <div class="metric-icon-wrap icon-green">🎯</div>
-                <div class="metric-content">
-                    <span class="metric-title">Clean Accuracy</span>
-                    <span class="metric-num text-green">99.8% vs 99.1%</span>
-                </div>
-                <span class="metric-badge badge-green">Standard vs Robust</span>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-icon-wrap icon-cyan">🛡️</div>
-                <div class="metric-content">
-                    <span class="metric-title">Robust Defense (&epsilon;=0.10)</span>
-                    <span class="metric-num text-cyan">12.4% vs 89.6%</span>
-                </div>
-                <span class="metric-badge badge-cyan">+77.2% Gain</span>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-icon-wrap icon-blue">🌐</div>
-                <div class="metric-content">
-                    <span class="metric-title">Domain Feasibility (&Pi;<sub>S</sub>)</span>
-                    <span class="metric-num text-blue">100.0% Feasible</span>
-                </div>
-                <span class="metric-badge badge-neutral">0% Violations</span>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-icon-wrap icon-purple">🤖</div>
-                <div class="metric-content">
-                    <span class="metric-title">Ollama Threat Synthesis</span>
-                    <span class="metric-num text-purple">Active</span>
-                </div>
-                <span class="metric-badge badge-neutral">Dynamic AI</span>
-            </div>
-        </div>
-
-        <!-- Quick Jump Grid -->
-        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px;">
-            <div class="metric-card" style="cursor:pointer; flex-direction:column; align-items:flex-start; gap:10px; padding:20px;" onclick="navigateTo('live-monitor')">
-                <div style="font-family:'Outfit', sans-serif; font-size:1.1rem; font-weight:800; display:flex; align-items:center; gap:8px;">
-                    <span>📡</span> Live Network Traffic Radar
-                </div>
-                <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.5;">360° polar radar scanner visualizing real-time flow connections, threat pings, dual Model A vs B verdicts, and streaming telemetry.</p>
-            </div>
-
-            <div class="metric-card" style="cursor:pointer; flex-direction:column; align-items:flex-start; gap:10px; padding:20px;" onclick="navigateTo('investigation-lab')">
-                <div style="font-family:'Outfit', sans-serif; font-size:1.1rem; font-weight:800; display:flex; align-items:center; gap:8px;">
-                    <span>⚡</span> Ollama Novel Attack Sandbox
-                </div>
-                <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.5;">Synthesize novel cyber attacks on-the-fly using local Ollama LLM, test both models, and generate bespoke forensics threat reports.</p>
-            </div>
-
-            <div class="metric-card" style="cursor:pointer; flex-direction:column; align-items:flex-start; gap:10px; padding:20px;" onclick="navigateTo('pitch-deck')">
-                <div style="font-family:'Outfit', sans-serif; font-size:1.1rem; font-weight:800; display:flex; align-items:center; gap:8px;">
-                    <span>💼</span> Executive Pitch Deck
-                </div>
-                <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.5;">Interactive investor slide presentation detailing the $20B+ market problem, the AdvRoNIDS technology moat, and business roadmap.</p>
-            </div>
-        </div>
-    </main>
-
-    <!-- ------------------------------------------------------------- -->
-    <!-- PAGE 2: AUTONOMOUS LIVE RADAR & INTERCEPTION MONITOR          -->
-    <!-- ------------------------------------------------------------- -->
-    <main id="page-live-monitor" class="app-page">
+    <main id="page-live-monitor" class="app-page active">
         
         <!-- Scoreboard Strip -->
         <div class="soc-metrics-strip">
@@ -1065,7 +846,7 @@
             </div>
 
             <div class="hud-controls-group">
-                <button class="hud-btn btn-purple" onclick="triggerOllamaNovelAttack()">
+                <button class="hud-btn btn-purple" id="main-synthesize-btn" onclick="triggerOllamaNovelAttack()">
                     <span>🔮 Synthesize Novel Attack (Ollama)</span>
                 </button>
                 <button class="hud-btn" id="feed-pause-btn" onclick="toggleLiveFeed()">
@@ -1184,121 +965,197 @@
             </div>
         </div>
 
+        <!-- PANEL 4: UNIFIED OLLAMA THREAT FORENSICS & MANIPULATED FEATURE TELEMETRY -->
+        <div class="novel-attack-card" id="novel-attack-display-box">
+            <div class="novel-banner-header">
+                <div>
+                    <div class="slide-tag">ACTIVE ADVERSARIAL THREAT PROFILE (OLLAMA SYNTHESIZED)</div>
+                    <div style="font-family:'Outfit', sans-serif; font-size:1.5rem; font-weight:800; color:var(--text-main);" id="novel-attack-name">Adaptive Timing and Size Poisoning</div>
+                    <div style="font-size:0.85rem; color:var(--text-muted); max-width:900px;" id="novel-attack-brief">The attacker crafts malicious packets with carefully perturbed timing and size features to evade AI detection.</div>
+                </div>
+
+                <button class="hud-btn btn-primary" onclick="downloadCurrentAttackPdf()" style="padding:10px 18px;">
+                    <span>📄 Download Attack Threat Report (PDF)</span>
+                </button>
+            </div>
+
+            <!-- Threat Profile Tags -->
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <span class="metric-badge badge-neutral" id="novel-actor-tag">Attributed: Blackhide</span>
+                <span class="metric-badge badge-neutral" id="novel-mitre-tag">MITRE: T1048.005 - Resource Exhaustion</span>
+                <span class="metric-badge badge-neutral" id="novel-target-tag">Target: Web Application / Port 80</span>
+                <span class="metric-badge badge-cyan" id="novel-eps-tag">&epsilon; = 0.12 (7 Steps)</span>
+            </div>
+
+            <!-- Forensics Analysis Grid -->
+            <div class="forensics-grid">
+                <div class="forensics-box">
+                    <div class="forensics-title"><span>📋</span> Executive Threat Assessment</div>
+                    <div id="novel-exec-summary" style="color:var(--text-muted);">
+                        The attack leveraged subtle manipulation of idle max and flow inter-arrival times to evade detection by Model A. Model B correctly identified the attack, demonstrating robust adversarial resilience.
+                    </div>
+                </div>
+
+                <div class="forensics-box">
+                    <div class="forensics-title"><span>🔍</span> Exploitation Vector & Root Cause</div>
+                    <div id="novel-root-cause" style="color:var(--text-muted);">
+                        The attack exploited the undefended model's sensitivity to continuous timing features. Reliance on fragile correlations caused Model A's decision boundary to collapse.
+                    </div>
+                </div>
+
+                <div class="forensics-box">
+                    <div class="forensics-title"><span>🛡️</span> Firewall & Mitigation Playbook</div>
+                    <div id="novel-mitigation" style="color:var(--text-muted); white-space:pre-line;">
+                        • Deploy AdvRoNIDS invariant neural filters at edge gateway.
+                        • Implement stateful packet inspection correlating TCP window size with inter-arrival times.
+                        • Retrain models with Min-Max domain projection (&Pi;<sub>S</sub>).
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Perturbation Table -->
+            <div>
+                <div style="font-family:'Outfit', sans-serif; font-size:0.95rem; font-weight:800; margin-bottom:8px;">📊 Manipulated Feature Telemetry (&Delta; Shift)</div>
+                <table class="telemetry-table">
+                    <thead>
+                        <tr>
+                            <th>Feature Description</th>
+                            <th>Constraint Status</th>
+                            <th style="text-align: right;">Model A Delta (&Delta;<sub>A</sub>)</th>
+                            <th style="text-align: right;">Model B Delta (&Delta;<sub>B</sub>)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="novel-telemetry-tbody">
+                        <tr>
+                            <td><strong>Idle Max</strong></td>
+                            <td><span class="metric-badge badge-cyan">MANIPULABLE</span></td>
+                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-red);">+0.1200</td>
+                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-green);">+0.0000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Flow Inter-Arrival Time Std Dev</strong></td>
+                            <td><span class="metric-badge badge-cyan">MANIPULABLE</span></td>
+                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-red);">+0.1200</td>
+                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-green);">+0.1200</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Maximum Flow Inter-Arrival Time</strong></td>
+                            <td><span class="metric-badge badge-cyan">MANIPULABLE</span></td>
+                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-red);">+0.1200</td>
+                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-green);">-0.0004</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mean Forward Packet Length</strong></td>
+                            <td><span class="metric-badge badge-cyan">MANIPULABLE</span></td>
+                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-red);">+0.1200</td>
+                            <td style="text-align:right; font-family:'Fira Code', monospace; color:var(--accent-green);">+0.0514</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Deep-Dive Mechanistic Explanation Card -->
+            <div style="background:var(--bg-card); border:1px solid var(--border-color); border-left:4px solid var(--accent-blue); border-radius:10px; padding:18px 22px; display:flex; flex-direction:column; gap:12px;">
+                <div style="font-family:'Outfit', sans-serif; font-size:1.05rem; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:8px;">
+                    <span>💡</span> How to Read This Telemetry: Mechanistic Breakdown
+                </div>
+                
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; font-size:0.82rem; line-height:1.55;">
+                    <div style="background:var(--bg-surface); border:1px solid rgba(220, 38, 38, 0.25); border-radius:8px; padding:14px;">
+                        <strong style="color:var(--accent-red); font-size:0.88rem;">🔴 Why Model A Failed (&Delta;<sub>A</sub> = +0.1200):</strong>
+                        <p style="margin-top:6px; color:var(--text-muted);">
+                            The adversary applied gradient ascent to maximize classification loss. Because Model A relies on continuous correlations, the attacker pushed manipulable timing metrics to the maximum boundary of <strong>+0.1200</strong>, causing the standard model's decision boundary to collapse into misclassification.
+                        </p>
+                    </div>
+
+                    <div style="background:var(--bg-surface); border:1px solid rgba(5, 150, 105, 0.25); border-radius:8px; padding:14px;">
+                        <strong style="color:var(--accent-green); font-size:0.88rem;">🟢 Why AdvRoNIDS Model B Won (&Delta;<sub>B</sub> Dampened):</strong>
+                        <p style="margin-top:6px; color:var(--text-muted);">
+                            Model B was trained with <strong>Min-Max Robust Optimization</strong> under <strong>Domain Projection (&Pi;<sub>S</sub>)</strong>. It actively dampens malicious shifts (holding <em>Idle Max</em> to <strong>+0.0000</strong> and <em>Max Flow IAT</em> to <strong>-0.0004</strong>) and anchors prediction on protocol invariants, sustaining 100% ground-truth detection.
+                        </p>
+                    </div>
+                </div>
+
+                <div style="font-size:0.75rem; color:var(--text-dim); border-top:1px solid var(--border-color); padding-top:10px; display:flex; flex-wrap:wrap; gap:12px;">
+                    <span><strong>Idle Max:</strong> Maximum quiet duration between socket transactions</span>
+                    <span>•</span>
+                    <span><strong>Flow IAT:</strong> Packet inter-arrival jitter & delay</span>
+                    <span>•</span>
+                    <span><strong>Mean Fwd Pkt:</strong> Average outbound payload byte size</span>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- ------------------------------------------------------------- -->
-    <!-- PAGE 3: OLLAMA NOVEL ATTACK SANDBOX & INVESTIGATION LAB        -->
+    <!-- PAGE 2: DASHBOARD (OVERVIEW)                                  -->
     <!-- ------------------------------------------------------------- -->
-    <main id="page-investigation-lab" class="app-page">
-        <div style="display:flex; flex-direction:column; gap:16px;">
-            
-            <div class="soc-controls-bar">
-                <div class="hud-status-group">
-                    <span style="font-family:'Outfit', sans-serif; font-size:1.1rem; font-weight:800;">⚡ Ollama Cyber Threat Synthesizer</span>
-                    <span style="font-size:0.75rem; color:var(--text-muted);">Generates novel attacks & bespoke forensics</span>
-                </div>
+    <main id="page-overview" class="app-page">
+        <div style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:14px; padding:28px 32px; margin-bottom:20px; box-shadow:var(--shadow-card);">
+            <div style="font-family:'Outfit', sans-serif; font-size:1.7rem; font-weight:800; margin-bottom:8px;">AdvRoNIDS Defense Dashboard</div>
+            <div style="font-size:0.92rem; color:var(--text-muted); max-width:950px; line-height:1.6; margin-bottom:18px;">
+                Traditional AI Intrusion Detectors achieve 99.8% clean accuracy but suffer catastrophic blind spots under adversarial gradient attacks (collapsing to 12.4%). AdvRoNIDS deploys <strong>Min-Max Robust Optimization</strong> under <strong>Structural Domain Projection (&Pi;<sub>S</sub>)</strong> to guarantee invariant protection across physical network streams.
+            </div>
+        </div>
 
-                <div class="hud-controls-group">
-                    <button class="hud-btn btn-purple" id="synthesize-attack-btn" onclick="triggerOllamaNovelAttack()" style="padding:10px 22px;">
-                        <span>🔮 Synthesize New Attack with Ollama</span>
-                    </button>
+        <div class="soc-metrics-strip">
+            <div class="metric-card">
+                <div class="metric-icon-wrap icon-green">🎯</div>
+                <div class="metric-content">
+                    <span class="metric-title">Clean Accuracy</span>
+                    <span class="metric-num text-green">99.8% vs 99.1%</span>
                 </div>
+                <span class="metric-badge badge-green">Standard vs Robust</span>
             </div>
 
-            <!-- Novel Attack Active Assessment Box -->
-            <div class="novel-attack-card" id="novel-attack-display-box" style="display:none;">
-                <div class="novel-banner-header">
-                    <div>
-                        <div class="slide-tag">ACTIVE ADVERSARIAL SCENARIO</div>
-                        <div style="font-family:'Outfit', sans-serif; font-size:1.5rem; font-weight:800; color:var(--text-main);" id="novel-attack-name">--</div>
-                        <div style="font-size:0.85rem; color:var(--text-muted);" id="novel-attack-brief">--</div>
-                    </div>
-
-                    <button class="hud-btn btn-primary" onclick="downloadCurrentAttackPdf()" style="padding:10px 18px;">
-                        <span>📄 Download Attack Threat Report (PDF)</span>
-                    </button>
+            <div class="metric-card">
+                <div class="metric-icon-wrap icon-cyan">🛡️</div>
+                <div class="metric-content">
+                    <span class="metric-title">Robust Defense (&epsilon;=0.10)</span>
+                    <span class="metric-num text-cyan">12.4% vs 89.6%</span>
                 </div>
-
-                <!-- Threat Profile Tags -->
-                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <span class="metric-badge badge-neutral" id="novel-actor-tag">Attributed: --</span>
-                    <span class="metric-badge badge-neutral" id="novel-mitre-tag">MITRE: --</span>
-                    <span class="metric-badge badge-neutral" id="novel-target-tag">Target: --</span>
-                    <span class="metric-badge badge-cyan" id="novel-eps-tag">&epsilon; = 0.12 (7 Steps)</span>
-                </div>
-
-                <!-- Forensics Analysis Grid -->
-                <div class="forensics-grid">
-                    <div class="forensics-box">
-                        <div class="forensics-title"><span>📋</span> Executive Threat Assessment</div>
-                        <div id="novel-exec-summary" style="color:var(--text-muted);">--</div>
-                    </div>
-
-                    <div class="forensics-box">
-                        <div class="forensics-title"><span>🔍</span> Exploitation Vector & Root Cause</div>
-                        <div id="novel-root-cause" style="color:var(--text-muted);">--</div>
-                    </div>
-
-                    <div class="forensics-box">
-                        <div class="forensics-title"><span>🛡️</span> Firewall & Mitigation Playbook</div>
-                        <div id="novel-mitigation" style="color:var(--text-muted); white-space:pre-line;">--</div>
-                    </div>
-                </div>
-
-                <!-- Feature Perturbation Table -->
-                <div>
-                    <div style="font-family:'Outfit', sans-serif; font-size:0.95rem; font-weight:800; margin-bottom:8px;">📊 Manipulated Feature Telemetry (&Delta; Shift)</div>
-                    <table class="telemetry-table">
-                        <thead>
-                            <tr>
-                                <th>Feature Description</th>
-                                <th>Constraint Status</th>
-                                <th style="text-align: right;">Model A Delta (&Delta;<sub>A</sub>)</th>
-                                <th style="text-align: right;">Model B Delta (&Delta;<sub>B</sub>)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="novel-telemetry-tbody"></tbody>
-                    </table>
-                </div>
-
-                <!-- NEW: Interactive Deep-Dive Explanation Card -->
-                <div style="background:var(--bg-card); border:1px solid var(--border-color); border-left:4px solid var(--accent-blue); border-radius:10px; padding:18px 22px; display:flex; flex-direction:column; gap:12px;">
-                    <div style="font-family:'Outfit', sans-serif; font-size:1.05rem; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:8px;">
-                        <span>💡</span> How to Read This Telemetry: Mechanistic Breakdown
-                    </div>
-                    
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; font-size:0.82rem; line-height:1.55;">
-                        <div style="background:var(--bg-surface); border:1px solid rgba(220, 38, 38, 0.25); border-radius:8px; padding:14px;">
-                            <strong style="color:var(--accent-red); font-size:0.88rem;">🔴 Why Model A Failed (&Delta;<sub>A</sub> = +0.1200):</strong>
-                            <p style="margin-top:6px; color:var(--text-muted);">
-                                The adversary applied gradient ascent to maximize classification loss. Because Model A relies on continuous correlations, the attacker pushed manipulable timing metrics (e.g. <em>Idle Max</em>, <em>Flow IAT Std Dev</em>) to the maximum allowable boundary of <strong>+0.1200</strong>, causing the standard model's decision boundary to collapse into misclassification.
-                            </p>
-                        </div>
-
-                        <div style="background:var(--bg-surface); border:1px solid rgba(5, 150, 105, 0.25); border-radius:8px; padding:14px;">
-                            <strong style="color:var(--accent-green); font-size:0.88rem;">🟢 Why AdvRoNIDS Model B Won (&Delta;<sub>B</sub> Dampened):</strong>
-                            <p style="margin-top:6px; color:var(--text-muted);">
-                                Model B was trained with <strong>Min-Max Robust Optimization</strong> under <strong>Domain Projection (&Pi;<sub>S</sub>)</strong>. It actively dampens malicious shifts (holding <em>Idle Max</em> to <strong>+0.0000</strong> and <em>Max Flow IAT</em> to <strong>-0.0004</strong>) and anchors prediction on protocol invariants, sustaining 100% ground-truth detection.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Plain-Language Feature Network Glossary -->
-                    <div style="font-size:0.75rem; color:var(--text-dim); border-top:1px solid var(--border-color); padding-top:10px; display:flex; flex-wrap:wrap; gap:12px;">
-                        <span><strong>Idle Max:</strong> Maximum quiet duration between socket transactions</span>
-                        <span>•</span>
-                        <span><strong>Flow IAT:</strong> Packet inter-arrival jitter & delay</span>
-                        <span>•</span>
-                        <span><strong>Mean Fwd Pkt:</strong> Average outbound payload byte size</span>
-                    </div>
-                </div>
+                <span class="metric-badge badge-cyan">+77.2% Gain</span>
             </div>
 
+            <div class="metric-card">
+                <div class="metric-icon-wrap icon-blue">🌐</div>
+                <div class="metric-content">
+                    <span class="metric-title">Domain Feasibility (&Pi;<sub>S</sub>)</span>
+                    <span class="metric-num text-blue">100.0% Feasible</span>
+                </div>
+                <span class="metric-badge badge-neutral">0% Violations</span>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon-wrap icon-blue">🤖</div>
+                <div class="metric-content">
+                    <span class="metric-title">Ollama Threat Synthesis</span>
+                    <span class="metric-num text-blue">Active</span>
+                </div>
+                <span class="metric-badge badge-neutral">Dynamic AI</span>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:16px;">
+            <div class="metric-card" style="cursor:pointer; flex-direction:column; align-items:flex-start; gap:10px; padding:20px;" onclick="navigateTo('live-monitor')">
+                <div style="font-family:'Outfit', sans-serif; font-size:1.1rem; font-weight:800; display:flex; align-items:center; gap:8px;">
+                    <span>📡</span> Live Network Traffic Radar & Threat Synthesis
+                </div>
+                <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.5;">360° polar radar scanner visualizing real-time flow connections, threat pings, dual Model A vs B verdicts, Ollama forensics, and live telemetry.</p>
+            </div>
+
+            <div class="metric-card" style="cursor:pointer; flex-direction:column; align-items:flex-start; gap:10px; padding:20px;" onclick="navigateTo('pitch-deck')">
+                <div style="font-family:'Outfit', sans-serif; font-size:1.1rem; font-weight:800; display:flex; align-items:center; gap:8px;">
+                    <span>💼</span> Executive Pitch Deck
+                </div>
+                <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.5;">Interactive investor slide presentation detailing the $20B+ market problem, the AdvRoNIDS technology moat, and business roadmap.</p>
+            </div>
         </div>
     </main>
 
     <!-- ------------------------------------------------------------- -->
-    <!-- PAGE 4: EXECUTIVE PITCH DECK                                  -->
+    <!-- PAGE 3: EXECUTIVE PITCH DECK                                  -->
     <!-- ------------------------------------------------------------- -->
     <main id="page-pitch-deck" class="app-page">
         <div class="pitch-deck-container">
@@ -1450,7 +1307,7 @@
     </main>
 
     <!-- ------------------------------------------------------------- -->
-    <!-- PAGE 5: INCIDENT REPORTS & PDF EXPORT                         -->
+    <!-- PAGE 4: INCIDENT REPORTS & PDF EXPORT                         -->
     <!-- ------------------------------------------------------------- -->
     <main id="page-reports" class="app-page">
         <div style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:12px; padding:24px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; box-shadow:var(--shadow-card);">
@@ -1483,7 +1340,7 @@
                     </tr>
                 </thead>
                 <tbody id="session-incidents-tbody">
-                    <tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:20px;">No incidents recorded yet. Intercepted events from the live radar or sandbox will appear here.</td></tr>
+                    <tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:20px;">No incidents recorded yet. Intercepted events from the live radar will appear here.</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1493,7 +1350,7 @@
     <!-- JAVASCRIPT CONTROLLER                                         -->
     <!-- ------------------------------------------------------------- -->
     <script>
-        let activePage = 'overview';
+        let activePage = 'live-monitor';
         let currentTheme = 'light';
         let isLiveFeedRunning = true;
         let liveFeedTimer = null;
@@ -1530,16 +1387,16 @@
 
         function initRouter() {
             window.addEventListener('hashchange', () => {
-                const hash = window.location.hash.replace('#/', '') || 'overview';
+                const hash = window.location.hash.replace('#/', '') || 'live-monitor';
                 navigateTo(hash, false);
             });
-            const initial = window.location.hash.replace('#/', '') || 'overview';
+            const initial = window.location.hash.replace('#/', '') || 'live-monitor';
             navigateTo(initial, false);
         }
 
         function navigateTo(pageId, updateHash = true) {
-            const pages = ['overview', 'live-monitor', 'investigation-lab', 'pitch-deck', 'reports'];
-            if (!pages.includes(pageId)) pageId = 'overview';
+            const pages = ['live-monitor', 'overview', 'pitch-deck', 'reports'];
+            if (!pages.includes(pageId)) pageId = 'live-monitor';
             activePage = pageId;
 
             pages.forEach(p => {
@@ -1556,7 +1413,6 @@
             if (pageId === 'live-monitor') resizeRadarCanvas();
         }
 
-        // PITCH DECK SLIDE CONTROLLER
         function updateSlide() {
             for (let i = 1; i <= totalSlides; i++) {
                 const sl = document.getElementById(`slide-${i}`);
@@ -1583,7 +1439,6 @@
             }
         }
 
-        // AUDIO CONTROLLER
         function playSound(type) {
             if (!isAudioEnabled) return;
             try {
@@ -1859,11 +1714,14 @@
             }
         }
 
-        // OLLAMA NOVEL ATTACK SYNTHESIS
+        // UNIFIED OLLAMA NOVEL ATTACK SYNTHESIS
         async function triggerOllamaNovelAttack() {
-            navigateTo('investigation-lab');
-            const box = document.getElementById('novel-attack-display-box');
-            box.style.display = 'flex';
+            const btn = document.getElementById('main-synthesize-btn');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span>⏳ Synthesizing Threat via Ollama...</span>';
+            }
+
             document.getElementById('novel-attack-name').innerText = 'Synthesizing novel threat scenario via Ollama...';
             document.getElementById('novel-attack-brief').innerText = 'Please wait while Ollama Red Team model crafts attack parameters and executes live PGD test...';
 
@@ -1873,6 +1731,59 @@
                 const data = await res.json();
                 currentNovelAttack = data;
 
+                // 1. Update Top Radar & Verdict Station
+                document.getElementById('packet-flow-id').innerText = data.flow_id.split('_').slice(0, 3).join('_');
+                document.getElementById('packet-category-name').innerText = `${data.attack_name} (${data.base_category})`;
+                document.getElementById('packet-target').innerText = data.target_service;
+                document.getElementById('inspection-state-tag').innerText = 'OLLAMA ATTACK ACTIVE';
+
+                // Trigger Radar Threat Pulse & Audio
+                triggerBlipThreatPulse(true);
+                playSound('intercept');
+
+                const isEvadedA = data.model_a_evaded;
+                const isDefendedB = data.model_b_defended;
+
+                // Update Verdict Boxes
+                setTimeout(() => {
+                    if (isEvadedA) playSound('evaded'); else playSound('defended');
+
+                    const boxA = document.getElementById('verdict-box-a');
+                    const badgeA = document.getElementById('badge-model-a');
+                    document.getElementById('pred-label-a').innerText = data.model_a_pred;
+                    document.getElementById('conf-val-a').innerText = `${(data.model_a_conf * 100).toFixed(1)}%`;
+                    document.getElementById('progress-fill-a').style.width = `${(data.model_a_conf * 100).toFixed(1)}%`;
+
+                    if (isEvadedA) {
+                        boxA.className = 'model-verdict-box box-compromised';
+                        badgeA.className = 'metric-badge badge-red'; badgeA.innerText = 'COMPROMISED';
+                        document.getElementById('progress-fill-a').className = 'progress-bar-fill fill-red';
+                        document.getElementById('banner-model-a').className = 'verdict-banner banner-evaded';
+                        document.getElementById('banner-text-a').innerText = `EVASION DETECTED: Intrusion misclassified as '${data.model_a_pred}'`;
+                    } else {
+                        boxA.className = 'model-verdict-box';
+                        badgeA.className = 'metric-badge badge-green'; badgeA.innerText = 'NORMAL';
+                        document.getElementById('progress-fill-a').className = 'progress-bar-fill fill-blue';
+                        document.getElementById('banner-model-a').className = 'verdict-banner banner-normal';
+                        document.getElementById('banner-text-a').innerText = `CLEARED: Accurate classification of '${data.model_a_pred}'`;
+                    }
+
+                    const boxB = document.getElementById('verdict-box-b');
+                    const badgeB = document.getElementById('badge-model-b');
+                    document.getElementById('pred-label-b').innerText = data.model_b_pred;
+                    document.getElementById('conf-val-b').innerText = `${(data.model_b_conf * 100).toFixed(1)}%`;
+                    document.getElementById('progress-fill-b').style.width = `${(data.model_b_conf * 100).toFixed(1)}%`;
+
+                    if (isDefendedB) {
+                        boxB.className = 'model-verdict-box box-defended';
+                        badgeB.className = 'metric-badge badge-green'; badgeB.innerText = 'DEFENSE INTACT';
+                        document.getElementById('progress-fill-b').className = 'progress-bar-fill fill-green';
+                        document.getElementById('banner-model-b').className = 'verdict-banner banner-defended';
+                        document.getElementById('banner-text-b').innerText = `DEFENSE INTACT: Threat verified as '${data.model_b_pred}'`;
+                    }
+                }, 200);
+
+                // 2. Update Forensics Section
                 document.getElementById('novel-attack-name').innerText = data.attack_name;
                 document.getElementById('novel-attack-brief').innerText = data.scenario_brief;
                 document.getElementById('novel-actor-tag').innerText = `Attributed: ${data.threat_actor}`;
@@ -1885,6 +1796,7 @@
                 document.getElementById('novel-root-cause').innerText = f.root_cause_analysis || '--';
                 document.getElementById('novel-mitigation').innerText = f.mitigation_playbook || '--';
 
+                // 3. Update Telemetry Table
                 const tbody = document.getElementById('novel-telemetry-tbody');
                 tbody.innerHTML = '';
                 (data.top_features || []).forEach(feat => {
@@ -1897,6 +1809,26 @@
                     `;
                     tbody.appendChild(tr);
                 });
+
+                // 4. Log to Terminal
+                appendTerminalLog(`> [OLLAMA ATTACK SYNTHESIZED] Scenario: ${data.attack_name} (${data.base_category})`);
+                appendTerminalLog(`> Attributed Actor: ${data.threat_actor} | MITRE: ${data.mitre_technique}`);
+                if (isEvadedA) appendTerminalLog(`> Model A (Standard): CLASSIFICATION COMPROMISED — Evaded into '${data.model_a_pred}'`);
+                if (isDefendedB) appendTerminalLog(`> Model B (AdvRoNIDS): THREAT NEUTRALIZED — Verified '${data.model_b_pred}'`);
+
+                // Update Session Scoreboard
+                sessionState.total_flows++;
+                if (isEvadedA) sessionState.a_missed++;
+                if (isDefendedB) sessionState.b_caught++;
+
+                const total = sessionState.total_flows;
+                const missed = sessionState.a_missed;
+                const rate = total > 0 ? (((total - missed) / total) * 100).toFixed(1) : '100.0';
+
+                document.getElementById('ticker-flows-count').innerText = total;
+                document.getElementById('ticker-b-caught').innerText = sessionState.b_caught;
+                document.getElementById('ticker-a-missed').innerText = sessionState.a_missed;
+                document.getElementById('ticker-defense-rate').innerText = `${rate}%`;
 
                 // Append to session incidents
                 sessionState.incidents.push({
@@ -1911,6 +1843,11 @@
             } catch (e) {
                 document.getElementById('novel-attack-name').innerText = 'Attack Generation Error';
                 document.getElementById('novel-attack-brief').innerText = String(e);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>🔮 Synthesize Novel Attack (Ollama)</span>';
+                }
             }
         }
 
@@ -1926,7 +1863,7 @@
             div.className = 'log-row';
             if (text.includes('COMPROMISED') || text.includes('Evaded')) div.className += ' log-evasion';
             else if (text.includes('NEUTRALIZED') || text.includes('DEFENSE INTACT')) div.className += ' log-defended';
-            else if (text.includes('detected:')) div.className += ' log-threat';
+            else if (text.includes('detected:') || text.includes('SYNTHESIZED')) div.className += ' log-threat';
             else div.className += ' log-clean';
             div.innerText = text;
             feed.appendChild(div);
@@ -1943,7 +1880,6 @@
             return new Date().toTimeString().split(' ')[0];
         }
 
-        // REPORTS CONTROLLER
         function renderSessionReportsTable() {
             const tbody = document.getElementById('session-incidents-tbody');
             const countEl = document.getElementById('reports-incident-count');
